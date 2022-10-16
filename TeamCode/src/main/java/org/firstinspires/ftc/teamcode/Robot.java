@@ -23,7 +23,7 @@ public abstract class Robot {
         gamepad2 = opMode.gamepad2;
     }
 
-    public final void delay(long milliseconds) {
+    public final void delay(double milliseconds) {
         ElapsedTime t = new ElapsedTime();
         double t0 = t.milliseconds();
         while (t.milliseconds() - t0 < milliseconds && !opMode.isStopRequested()){}
