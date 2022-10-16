@@ -21,7 +21,7 @@ public class Robot22 extends Robot {
         lift = new Lift(opMode);
         intake = new Intake(opMode);
         virtual4bar = new Virtual4bar(opMode);
-        double gmpdx = gamepad1.left_stick_x, gmpdy = gamepad1.left_stick_y, trigger = gamepad1.right_trigger - gamepad1.left_trigger;
+
 
         telemetry.addData("Init ready!", "");
         telemetry.update();
