@@ -59,6 +59,7 @@ public class Lift {
                 motor2.setPower(-kP * motor1.getCurrentPosition() + kF);
             case TELE:
                 motor1.setPower(gamepad2.left_stick_y + kF);
+                motor2.setPower(gamepad2.left_stick_y + kF);
         }
     }
 }
