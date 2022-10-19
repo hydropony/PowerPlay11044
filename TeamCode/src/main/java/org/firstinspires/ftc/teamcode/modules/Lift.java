@@ -25,6 +25,7 @@ public class Lift {
         TELE
     }
     private State state = State.HOLD;
+    private double holdPosition = 0;
 
     public Lift(LinearOpMode linearOpMode) {
         this.linearOpMode = linearOpMode;
@@ -45,9 +46,6 @@ public class Lift {
     }
 
     public void teleop() {
-        motor1.setPower(gamepad2.left_stick_y + kF);
-        motor2.setPower(gamepad2.left_stick_y + kF);
-
         if (Math.abs(gamepad2.left_stick_y) > 0)
             state = State.TELE;
         else
@@ -55,11 +53,12 @@ public class Lift {
 
         switch (state) {
             case HOLD:
-                motor1.setPower(-kP * motor1.getCurrentPosition() + kF);
-                motor2.setPower(-kP * motor1.getCurrentPosition() + kF);
+                motor1.setPower(kP * (holdPosition - motor1.getCurrentPosition()) + kF);
+                motor2.setPower(kP * (holdPosition - motor1.getCurrentPosition()) + kF);
             case TELE:
                 motor1.setPower(gamepad2.left_stick_y + kF);
                 motor2.setPower(gamepad2.left_stick_y + kF);
+                holdPosition = motor1.getCurrentPosition();
         }
     }
 }

@@ -11,7 +11,9 @@ public class TeleOp extends LinearOpMode {
     public void runOpMode() throws InterruptedException {
         Robot22 R = new Robot22(this);
 
-        waitForStart();
+        while (!isStarted()) {
+            R.intakeHold();
+        }
 
         while (!isStopRequested()) {
             R.control();

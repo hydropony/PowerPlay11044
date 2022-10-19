@@ -22,6 +22,7 @@ public class Virtual4bar {
 
     private double ticksPerRev = 1120;
     private double startAngle = 0; //in Radians
+    private double holdPosition = 0;
 
     private enum State {
         FRONT,
@@ -54,9 +55,10 @@ public class Virtual4bar {
 
         switch (state) {
             case HOLD:
-                motor.setPower(-kP * motor.getCurrentPosition() + gravityCompensation);
+                motor.setPower(kP * (holdPosition - motor.getCurrentPosition()) + gravityCompensation);
             case TELE:
                 motor.setPower(gamepad2.right_stick_y + gravityCompensation);
+                holdPosition = motor.getCurrentPosition();
         }
     }
 }
