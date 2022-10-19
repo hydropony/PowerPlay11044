@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
@@ -14,6 +15,8 @@ public class Lift {
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
     private Gamepad gamepad2;
+    private CRServo servo3;
+    private CRServo servo2;
 
     private double kF = 0;
     private double kP = 0;
@@ -32,6 +35,9 @@ public class Lift {
         telemetry = linearOpMode.telemetry;
         gamepad2 = linearOpMode.gamepad2;
 
+        servo2 = hardwareMap.get(CRServo.class, "servo2");
+        servo3 = hardwareMap.get(CRServo.class, "servo3");
+
         motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
         motor2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
 
@@ -45,8 +51,9 @@ public class Lift {
     }
 
     public void teleop() {
+
         motor1.setPower(gamepad2.left_stick_y + kF);
-        motor2.setPower(gamepad2.left_stick_y + kF);
+       // motor2.setPower(gamepad2.left_stick_y + kF);
 
         if (Math.abs(gamepad2.left_stick_y) > 0)
             state = State.TELE;
@@ -56,10 +63,28 @@ public class Lift {
         switch (state) {
             case HOLD:
                 motor1.setPower(-kP * motor1.getCurrentPosition() + kF);
-                motor2.setPower(-kP * motor1.getCurrentPosition() + kF);
+                // motor2.setPower(-kP * motor1.getCurrentPosition() + kF);
             case TELE:
                 motor1.setPower(gamepad2.left_stick_y + kF);
-                motor2.setPower(gamepad2.left_stick_y + kF);
+               // motor2.setPower(gamepad2.left_stick_y + kF);
+        }
+        if(gamepad2.a) {
+            while (gamepad2.a) {
+                double power = 1;
+                servo3.setPower(power);
+                servo2.setPower(-power);
+            }
+        }
+        if(gamepad2.b) {
+            while (gamepad2.b) {
+                double power = 1;
+                servo3.setPower(-power);
+                servo2.setPower(power);
+            }
+        }
+        else {
+            servo3.setPower(0);
+            servo2.setPower(0);
         }
     }
 }

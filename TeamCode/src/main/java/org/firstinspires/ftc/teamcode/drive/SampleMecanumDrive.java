@@ -311,4 +311,14 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
+    public void EncoderForwardDrive(int leftFrontEncoder, int rightFrontEncoder, int leftRearEncoder, int rightRearEncoder, double speed){
+        leftFront.setTargetPosition(leftFrontEncoder);
+        rightFront.setTargetPosition(rightFrontEncoder);
+        leftRear.setTargetPosition(leftRearEncoder);
+        rightRear.setTargetPosition(rightRearEncoder);
+
+        setMode(DcMotor.RunMode.RUN_TO_POSITION);
+
+        setMotorPowers(speed, speed, speed, speed);
+    }
 }

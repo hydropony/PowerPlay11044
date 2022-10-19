@@ -25,9 +25,12 @@ import android.annotation.SuppressLint;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorEx;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetectionPipeline;
+import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.openftc.apriltag.AprilTagDetection;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
@@ -39,6 +42,7 @@ import java.util.ArrayList;
 @TeleOp
 public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 {
+    private DcMotorEx leftFront, leftRear, rightRear, rightFront;
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
 
@@ -56,7 +60,7 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     // UNITS ARE METERS
     double tagsize = 0.166;
 
-    // Tag ID 1,2,3 from the 36h11 family
+    // Tag ID 1,12,3 from the 36h11 family
     int LEFT = 1;
     int MIDDLE = 12;
     int RIGHT = 3;
@@ -66,6 +70,18 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
     @Override
     public void runOpMode()
     {
+        SampleMecanumDrive samp = new SampleMecanumDrive(hardwareMap);
+
+
+        leftFront = hardwareMap.get(DcMotorEx.class, "leftFront");
+        leftRear = hardwareMap.get(DcMotorEx.class, "leftRear");
+        rightRear = hardwareMap.get(DcMotorEx.class, "rightRear");
+        rightFront = hardwareMap.get(DcMotorEx.class, "rightFront");
+
+        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
         aprilTagDetectionPipeline = new AprilTagDetectionPipeline(tagsize, fx, fy, cx, cy);
@@ -168,12 +184,22 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
 
         /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
+
+            samp.EncoderForwardDrive(1000, 1000, 1000, 1000, 0.5);
+            samp.EncoderForwardDrive(-1000, 1000, -1000, 1000, 0.5);
+            samp.EncoderForwardDrive(500, 500, 500, 500, 0.5);
+            //Mowement to the side
             telemetry.addLine("Tag is not found or tag.id = LEFT");
             telemetry.update();
         }else if(tagOfInterest.id == MIDDLE){
+            samp.EncoderForwardDrive(1000, 1000, 1000, 1000, 0.5);
             telemetry.addLine("tag.id = MIDDLE");
             telemetry.update();
-        }else{
+        }else if(tagOfInterest.id == RIGHT){
+            samp.EncoderForwardDrive(1000, 1000, 1000, 1000, 0.5);
+            samp.EncoderForwardDrive(1000, -1000, 1000, -1000, 0.5);
+            samp.EncoderForwardDrive(500, 500, 500, 500, 0.5);
+
             telemetry.addLine(" tag.id = RIGHT");
             telemetry.update();
         }
