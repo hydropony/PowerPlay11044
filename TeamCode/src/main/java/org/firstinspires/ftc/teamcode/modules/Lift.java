@@ -21,7 +21,7 @@ public class Lift {
     private double kF = 0;
     private double kP = 0;
     private DcMotorEx motor1;
-    private DcMotorEx motor2;
+    //private DcMotorEx motor2;
 
     private enum State {
         HOLD,
@@ -39,14 +39,14 @@ public class Lift {
         servo3 = hardwareMap.get(CRServo.class, "servo3");
 
         motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
-        motor2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
+        //  motor2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
 
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        //motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor1.setDirection(DcMotorSimple.Direction.FORWARD);
-        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        //motor2.setDirection(DcMotorSimple.Direction.REVERSE);
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        //motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("", "Lift initialized!");
     }
 
