@@ -10,10 +10,9 @@ import org.firstinspires.ftc.teamcode.modules.Virtual4bar;
 
 public class Robot22 extends Robot {
     private SampleMecanumDrive drive;
-    private Lift lift;
-    private Intake intake;
-    private Virtual4bar virtual4bar;
-    double gmpdy = gamepad1.left_stick_y, gmpdx = gamepad1.left_stick_x, trigger = gamepad1.right_trigger - gamepad1.left_trigger;
+    public Lift lift;
+    public Intake intake;
+    public Virtual4bar virtual4bar;
 
     public Robot22(LinearOpMode opMode) {
         super(opMode);
@@ -30,9 +29,9 @@ public class Robot22 extends Robot {
     public void control() {
         drive.setWeightedDrivePower(
                 new Pose2d(
-                        -gmpdx,
-                        -gmpdy,
-                        -trigger
+                        -gamepad1.left_stick_y,
+                        -gamepad1.left_stick_x,
+                        -(gamepad1.right_trigger - gamepad1.left_trigger)
                 )
         );
 

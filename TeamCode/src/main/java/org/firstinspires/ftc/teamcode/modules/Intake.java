@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.misc.HardwareConfig;
 
 public class Intake {
     private HardwareMap hardwareMap;
@@ -25,8 +26,8 @@ public class Intake {
         telemetry = linearOpMode.telemetry;
         gamepad2 = linearOpMode.gamepad2;
 
-        servo1 = hardwareMap.get(CRServo.class, "intakeservo1");
-        servo2 = hardwareMap.get(CRServo.class, "intakeservo2");
+        servo1 = hardwareMap.get(CRServo.class, HardwareConfig.INTAKE_SERVO_1);
+        servo2 = hardwareMap.get(CRServo.class, HardwareConfig.INTAKE_SERVO_2);
 
         servo1.setDirection(DcMotorSimple.Direction.FORWARD);
         servo2.setDirection(DcMotorSimple.Direction.REVERSE);
