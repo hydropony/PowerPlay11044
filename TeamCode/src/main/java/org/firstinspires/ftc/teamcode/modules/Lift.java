@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
+import org.firstinspires.ftc.teamcode.misc.HardwareConfig;
 
 public class Lift {
     private HardwareMap hardwareMap;
@@ -33,8 +34,8 @@ public class Lift {
         telemetry = linearOpMode.telemetry;
         gamepad2 = linearOpMode.gamepad2;
 
-        motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
-        motor2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
+        motor1 = hardwareMap.get(DcMotorEx.class, HardwareConfig.LIFT_MOTOR_1);
+        motor2 = hardwareMap.get(DcMotorEx.class, HardwareConfig.LIFT_MOTOR_2);
 
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -46,19 +47,7 @@ public class Lift {
     }
 
     public void teleop() {
-        if (Math.abs(gamepad2.left_stick_y) > 0)
-            state = State.TELE;
-        else
-            state = State.HOLD;
-
-        switch (state) {
-            case HOLD:
-                motor1.setPower(kP * (holdPosition - motor1.getCurrentPosition()) + kF);
-                motor2.setPower(kP * (holdPosition - motor1.getCurrentPosition()) + kF);
-            case TELE:
-                motor1.setPower(gamepad2.left_stick_y + kF);
-                motor2.setPower(gamepad2.left_stick_y + kF);
-                holdPosition = motor1.getCurrentPosition();
-        }
+        motor1.setPower(gamepad2.left_stick_y);
+        motor2.setPower(gamepad2.left_stick_y);
     }
 }

@@ -10,9 +10,9 @@ import org.firstinspires.ftc.teamcode.modules.Virtual4bar;
 
 public class Robot22 extends Robot {
     private SampleMecanumDrive drive;
-    private Lift lift;
-    private Intake intake;
-    private Virtual4bar virtual4bar;
+    public Lift lift;
+    public Intake intake;
+    public Virtual4bar virtual4bar;
 
     public Robot22(LinearOpMode opMode) {
         super(opMode);
@@ -39,9 +39,5 @@ public class Robot22 extends Robot {
         lift.teleop();
         intake.teleop();
         virtual4bar.teleop();
-    }
-
-    public void intakeHold() {
-        intake.teleop();
     }
 }
