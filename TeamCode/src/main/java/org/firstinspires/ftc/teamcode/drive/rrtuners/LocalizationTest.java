@@ -42,9 +42,6 @@ public class LocalizationTest extends LinearOpMode {
         servo3 = hardwareMap.get(CRServo.class, "servo3");
 
 
-
-        drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
         waitForStart();
 
         while (!isStopRequested()) {
@@ -58,10 +55,9 @@ public class LocalizationTest extends LinearOpMode {
 
             drive.setWeightedDrivePower(
                     new Pose2d(
-                            - gamepad1.left_stick_y
+                            -gamepad1.left_stick_y,
                             -gamepad1.left_stick_x,
                             -(gamepad1.right_trigger - gamepad1.left_trigger)
-
                     )
             );
 
