@@ -23,7 +23,7 @@ public class Virtual4bar {
     private double kI = 0;
     private double kD = 0;
 
-    private double P, I, D;
+    private double P, I = 0, D;
 
     private double ticksPerRev = 1120;
     private double startAngle = 0; //in Radians
@@ -71,16 +71,13 @@ public class Virtual4bar {
 
     public void slowDownMovement(double time) {
         error = holdPosition - motor.getCurrentPosition();
-        while (Math.abs(error) > 30) {
-            error = holdPosition - motor.getCurrentPosition();
-            P = kP * error;
-            I += kI * error * (time - prevTime);
-            D = kD * (error - prevError) / (time - prevTime);
-            motor.setPower(P + I + D);
-            if (holdPosition > 0)
-                holdPosition -= (time - prevTime) * kSlow;
-            prevError = error;
-            prevTime = time;
-        }
+        P = kP * error;
+        I += kI * error * (time - prevTime);
+        D = kD * (error - prevError) / (time - prevTime);
+        motor.setPower(P + I + D);
+        if (holdPosition > 0)
+            holdPosition -= (time - prevTime) * kSlow;
+        prevError = error;
+        prevTime = time;
     }
 }

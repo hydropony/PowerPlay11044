@@ -26,8 +26,8 @@ public class DriveEncoderLocalizer {
     private SampleMecanumDrive drive;
     private double prevtime = 0;
 
-    public DriveEncoderLocalizer(LinearOpMode opMode, SampleMecanumDrive drive) {
-        hardwareMap = opMode.hardwareMap;
+    public DriveEncoderLocalizer(HardwareMap hardwareMap, SampleMecanumDrive drive) {
+        this.hardwareMap = hardwareMap;
         this.drive = drive;
 
         leftFrontEnc = new Encoder(hardwareMap.get(DcMotorEx.class, HardwareConfig.LEFT_FRONT_MOTOR));
@@ -65,6 +65,10 @@ public class DriveEncoderLocalizer {
         y += forwardVelo * (time - prevtime) * Math.cos(heading);
         x += strafeVelo * (time - prevtime) * Math.sin(heading);
         prevtime = time;
+    }
+
+    public void stopUpdating() {
+        prevtime = 0;
     }
 
     public double getX() {
