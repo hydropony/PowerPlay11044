@@ -27,6 +27,7 @@ import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.configuration.typecontainers.MotorConfigurationType;
 
+import org.firstinspires.ftc.teamcode.misc.DriveEncoderLocalizer;
 import org.firstinspires.ftc.teamcode.misc.HardwareConfig;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequence;
 import org.firstinspires.ftc.teamcode.trajectorysequence.TrajectorySequenceBuilder;
@@ -75,6 +76,8 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     private BNO055IMU imu;
     private VoltageSensor batteryVoltageSensor;
+
+    private DriveEncoderLocalizer driveEncoderLocalizer;
 
     public SampleMecanumDrive(HardwareMap hardwareMap) {
         super(kV, kA, kStatic, TRACK_WIDTH, TRACK_WIDTH, LATERAL_MULTIPLIER);
@@ -150,6 +153,7 @@ public class SampleMecanumDrive extends MecanumDrive {
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
         trajectorySequenceRunner = new TrajectorySequenceRunner(follower, HEADING_PID);
+        driveEncoderLocalizer = new DriveEncoderLocalizer(hardwareMap, this);
     }
 
     public TrajectoryBuilder trajectoryBuilder(Pose2d startPose) {
@@ -316,14 +320,54 @@ public class SampleMecanumDrive extends MecanumDrive {
     public static TrajectoryAccelerationConstraint getAccelerationConstraint(double maxAccel) {
         return new ProfileAccelerationConstraint(maxAccel);
     }
-    public void EncoderForwardDrive(int leftFrontEncoder, int rightFrontEncoder, int leftRearEncoder, int rightRearEncoder, double speed){
-        leftFront.setTargetPosition(leftFrontEncoder);
-        rightFront.setTargetPosition(rightFrontEncoder);
-        leftRear.setTargetPosition(leftRearEncoder);
-        rightRear.setTargetPosition(rightRearEncoder);
 
-        setMode(DcMotor.RunMode.RUN_TO_POSITION);
+    double kP = 0;
+    double kI = 0;
+    double kD = 0;
 
-        setMotorPowers(speed, speed, speed, speed);
+    public void genericGoToX(double targetX, double time) {
+        double error = targetX - driveEncoderLocalizer.getX();
+        double P, I = 0, D, prevTime = 0, prevError = 0;
+        driveEncoderLocalizer.stopUpdating();
+        while (Math.abs(error) > 1) {
+            driveEncoderLocalizer.update(time);
+            error = targetX - driveEncoderLocalizer.getX();
+            P = kP * error;
+            I += kI * error * (time - prevTime);
+            D = kD * (error - prevError) / (time - prevTime);
+            leftFront.setPower(P + I + D);
+            leftRear.setPower(-(P + I + D));
+            rightRear.setPower(P + I + D);
+            rightFront.setPower(-(P + I + D));
+            prevError = error;
+            prevTime = time;
+        }
+        leftFront.setPower(0);
+        leftRear.setPower(0);
+        rightRear.setPower(0);
+        rightFront.setPower(0);
+    }
+
+    public void genericGoToY(double targetY, double time) {
+        double error = targetY - driveEncoderLocalizer.getY();
+        double P, I = 0, D, prevTime = 0, prevError = 0;
+        driveEncoderLocalizer.stopUpdating();
+        while (Math.abs(error) > 1) {
+            driveEncoderLocalizer.update(time);
+            error = targetY - driveEncoderLocalizer.getX();
+            P = kP * error;
+            I += kI * error * (time - prevTime);
+            D = kD * (error - prevError) / (time - prevTime);
+            leftFront.setPower(P + I + D);
+            leftRear.setPower(P + I + D);
+            rightRear.setPower(P + I + D);
+            rightFront.setPower(P + I + D);
+            prevError = error;
+            prevTime = time;
+        }
+        leftFront.setPower(0);
+        leftRear.setPower(0);
+        rightRear.setPower(0);
+        rightFront.setPower(0);
     }
 }
