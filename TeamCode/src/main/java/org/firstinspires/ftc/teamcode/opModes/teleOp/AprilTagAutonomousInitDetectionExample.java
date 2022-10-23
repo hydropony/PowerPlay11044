@@ -185,20 +185,23 @@ public class AprilTagAutonomousInitDetectionExample extends LinearOpMode
         /* Actually do something useful */
         if(tagOfInterest == null || tagOfInterest.id == LEFT){
 
-            samp.EncoderForwardDrive(1000, 1000, 1000, 1000, 0.5);
-            samp.EncoderForwardDrive(-1000, 1000, -1000, 1000, 0.5);
-            samp.EncoderForwardDrive(500, 500, 500, 500, 0.5);
+            /*samp.EncoderForwardDrive(1000, 1000, 1000, 1000, 0.25);
+            samp.EncoderForwardDrive(-1000, 1000, -1000, 1000, 0.25);
+            samp.EncoderForwardDrive(500, 500, 500, 500, 0.25);*/
+            sleep(1000);
             //Mowement to the side
             telemetry.addLine("Tag is not found or tag.id = LEFT");
             telemetry.update();
         }else if(tagOfInterest.id == MIDDLE){
-            samp.EncoderForwardDrive(1000, 1000, 1000, 1000, 0.5);
+            //samp.EncoderForwardDrive(100, 100, 100, 100, 0.25);
+            sleep(1000);
             telemetry.addLine("tag.id = MIDDLE");
             telemetry.update();
         }else if(tagOfInterest.id == RIGHT){
-            samp.EncoderForwardDrive(1000, 1000, 1000, 1000, 0.5);
-            samp.EncoderForwardDrive(1000, -1000, 1000, -1000, 0.5);
-            samp.EncoderForwardDrive(500, 500, 500, 500, 0.5);
+            /*samp.EncoderForwardDrive(1000, 1000, 1000, 1000, 0.25);
+            samp.EncoderForwardDrive(1000, -1000, 1000, -1000, 0.25);
+            samp.EncoderForwardDrive(500, 500, 500, 500, 0.25);
+            sleep(1000);*/
 
             telemetry.addLine(" tag.id = RIGHT");
             telemetry.update();

@@ -149,6 +149,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
         leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
 
+        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftRear.setDirection(DcMotorSimple.Direction.REVERSE);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
@@ -267,6 +269,7 @@ public class SampleMecanumDrive extends MecanumDrive {
                     VX_WEIGHT * drivePower.getX(),
                     VY_WEIGHT * drivePower.getY(),
                     OMEGA_WEIGHT * drivePower.getHeading()
+
             ).div(denom);
         }
 

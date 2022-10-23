@@ -17,17 +17,20 @@ public class Virtual4bar {
     private Gamepad gamepad2;
 
     private DcMotorEx motor;
+    //private DcMotor leftFront, right;
 
     private double kF = 0;
-    private double kP = 0;
-    private double kI = 0;
-    private double kD = 0;
+    private double kP = 70;
+    private double kI = 90;
+    private double kD = 40;
+
+    private double pos, ref, err;
 
     private double P, I = 0, D;
 
     private double ticksPerRev = 1120;
     private double startAngle = 0; //in Radians
-    private double holdPosition = 0;
+    private double holdPosition = 400;
     private double prevTime = 0;
     public double error = 0;
     private double prevError = 0;
@@ -56,7 +59,7 @@ public class Virtual4bar {
     }
 
     public void teleop() {
-        motor.setPower(gamepad2.right_stick_y);
+        motor.setPower(1);
     }
 
     public void startHold(double time) {
@@ -79,5 +82,8 @@ public class Virtual4bar {
             holdPosition -= (time - prevTime) * kSlow;
         prevError = error;
         prevTime = time;
+    }
+    public void position(){
+        motor.setPower(-0.8);
     }
 }

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import org.firstinspires.ftc.teamcode.modules.Lift;
 import org.opencv.core.Mat;
 import java.util.List;
 
@@ -16,6 +17,7 @@ public class EzTeleop extends LinearOpMode {
     DcMotorEx stCh, lift1, lift2;
     CRServo servo3;
     CRServo servo2;
+    double err, konst, konst1;
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -51,6 +53,12 @@ public class EzTeleop extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
+            Lift lift = new Lift(this);
+            double ref = 50;
+            err = ref - stCh.getCurrentPosition();
+            konst = 0.7;
+
+            konst1 = 0.2;
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_trigger - gamepad1.left_trigger;
@@ -71,10 +79,10 @@ public class EzTeleop extends LinearOpMode {
                 rfpower /= max;
                 rbpower /= max;
             }
-            lf.setPower(lfpower);
-            lb.setPower(lbpower);
-            rf.setPower(rfpower);
-            rb.setPower(rbpower);
+            lf.setPower(lfpower*konst);
+            lb.setPower(-lbpower*konst);
+            rf.setPower(-rfpower*konst);
+            rb.setPower(-rbpower*konst);
 
             stCh.setPower(gamepad2.right_stick_y);
 
@@ -86,14 +94,27 @@ public class EzTeleop extends LinearOpMode {
                 servo3.setPower(-1);
                 servo2.setPower(1);
             }
+            if(gamepad1.a) {
+                servo3.setPower(1);
+                servo2.setPower(-1);
+            }
+            if(gamepad1.b) {
+                servo3.setPower(-1);
+                servo2.setPower(1);
+            }
             else {
                 servo3.setPower(0);
                 servo2.setPower(0);
             }
 
-            lift1.setPower(gamepad2.left_stick_y);
-            lift2.setPower(gamepad2.left_stick_y);
 
+            lift.teleop();
+
+        }
+
+
+        if(Math.abs(err) > 30){
+            stCh.setPower(gamepad2.right_stick_y*konst1);
         }
 
     }
