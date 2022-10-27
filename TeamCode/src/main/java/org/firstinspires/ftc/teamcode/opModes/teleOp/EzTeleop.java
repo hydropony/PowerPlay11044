@@ -8,6 +8,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.modules.Lift;
+import org.firstinspires.ftc.teamcode.modules.LiftPosition;
 import org.opencv.core.Mat;
 import java.util.List;
 
@@ -53,7 +54,8 @@ public class EzTeleop extends LinearOpMode {
         waitForStart();
 
         while (!isStopRequested()) {
-            Lift lift = new Lift(this);
+            LiftPosition lift = new LiftPosition(this);
+            //Lift lift = new Lift(this);
             double ref = 50;
             err = ref - stCh.getCurrentPosition();
             konst = 0.7;
@@ -62,6 +64,7 @@ public class EzTeleop extends LinearOpMode {
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_trigger - gamepad1.left_trigger;
+            //boolean rotationSlow = gamepad1.right_bumper;
             double lfpower, lbpower, rfpower, rbpower;
             lfpower = y + x + rotation;
             lbpower = y - x + rotation;
@@ -79,10 +82,10 @@ public class EzTeleop extends LinearOpMode {
                 rfpower /= max;
                 rbpower /= max;
             }
-            lf.setPower(lfpower*konst);
-            lb.setPower(-lbpower*konst);
-            rf.setPower(-rfpower*konst);
-            rb.setPower(-rbpower*konst);
+            lf.setPower(lfpower);
+            lb.setPower(-lbpower);
+            rf.setPower(-rfpower);
+            rb.setPower(-rbpower);
 
             stCh.setPower(gamepad2.right_stick_y);
 
@@ -108,7 +111,9 @@ public class EzTeleop extends LinearOpMode {
             }
 
 
-            lift.teleop();
+            lift.Pos0();
+            lift.Pos1();
+            lift.Retention();
 
         }
 

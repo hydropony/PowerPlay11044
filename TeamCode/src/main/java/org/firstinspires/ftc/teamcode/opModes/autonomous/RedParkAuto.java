@@ -63,8 +63,6 @@ public class RedParkAuto extends LinearOpMode {
 
         telemetry.setMsTransmissionInterval(50);
 
-        ElapsedTime t = new ElapsedTime();
-
         EncoderMecanumDrive drive = new EncoderMecanumDrive(this);
 
         //Virtual4bar VR = new Virtual4bar(this);
@@ -147,36 +145,24 @@ public class RedParkAuto extends LinearOpMode {
             //R.virtual4bar.position(100);
             sleep(1000);
             if(tagOfInterest == null || tagOfInterest.id == LEFT){
-
-                while (t.milliseconds() < 2000) {
-                    drive.EncoderForwardDrive(0.8);
-                }
-                while (t.milliseconds() <2000){
-                    drive.TurnLeft(0.8);
+                drive.EncoderDrive(200 , 200, 0.5);
+                drive.EncoderDrive(200, -200, 0.5);
                 }
                 sleep(1000);
                 //Mowement to the side
                 telemetry.addLine("Tag is not found or tag.id = LEFT");
                 telemetry.update();
-            }else if(tagOfInterest.id == MIDDLE){
-
-                while (t.milliseconds() < 2000) {
-                    drive.EncoderForwardDrive(0.8);
-                }
+            }if(tagOfInterest.id == MIDDLE){
+            drive.EncoderDrive(200 , 200, 0.5);
                 sleep(1000);
                 telemetry.addLine("tag.id = MIDDLE");
                 telemetry.update();
             }else if(tagOfInterest.id == RIGHT){
-                while (t.milliseconds() < 2000) {
-                    drive.EncoderForwardDrive(0.8);
-                }
-                while (t.milliseconds() < 2000){
-                    drive.TurnRight(0.8);
-                }
-
+            drive.EncoderDrive(200 , 200, 0.5);
+            drive.EncoderDrive(-200 , 200, 0.5);
                 telemetry.addLine(" tag.id = RIGHT");
                 telemetry.update();
-            }
+
         }
     }
     @SuppressLint("DefaultLocale")
