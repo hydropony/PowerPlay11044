@@ -20,7 +20,7 @@ public class Lift {
 
     private double kF = 0;
     private double kP = 0;
-    private DcMotorEx motor1;
+    private DcMotorEx motor1, motor2;
     //private DcMotorEx motor2;
 
     private enum State {
@@ -39,21 +39,21 @@ public class Lift {
         servo3 = hardwareMap.get(CRServo.class, "servo3");
 
         motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
-        //  motor2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
+        motor2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
 
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        //motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
+        motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor1.setDirection(DcMotorSimple.Direction.FORWARD);
-        //motor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        //motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("", "Lift initialized!");
     }
 
     public void teleop() {
 
         motor1.setPower(gamepad2.left_stick_y + kF);
-       // motor2.setPower(gamepad2.left_stick_y + kF);
+       motor2.setPower(gamepad2.left_stick_y + kF);
 
         if (Math.abs(gamepad2.left_stick_y) > 0)
             state = State.TELE;
@@ -63,11 +63,14 @@ public class Lift {
         switch (state) {
             case HOLD:
                 motor1.setPower(-kP * motor1.getCurrentPosition() + kF);
-                // motor2.setPower(-kP * motor1.getCurrentPosition() + kF);
+                 motor2.setPower(-kP * motor1.getCurrentPosition() + kF);
             case TELE:
                 motor1.setPower(gamepad2.left_stick_y + kF);
-               // motor2.setPower(gamepad2.left_stick_y + kF);
+               motor2.setPower(gamepad2.left_stick_y + kF);
+
         }
+        telemetry.addData("lift",motor1.getCurrentPosition());
+        telemetry.update();
       /*  if(gamepad2.a) {
             while (gamepad2.a) {
                 double power = 1;
