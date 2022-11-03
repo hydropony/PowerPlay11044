@@ -7,10 +7,13 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import org.firstinspires.ftc.robotcore.external.Telemetry;
+
 public class LiftPosition {
 
     private Gamepad gamepad2;
     private HardwareMap hardwareMap;
+    private Telemetry telemetry;
     private LinearOpMode linearOpMode;
     private DcMotorEx motor1, motor2;
     private double kF = 0;
@@ -18,6 +21,7 @@ public class LiftPosition {
     public LiftPosition(LinearOpMode linearOpMode){
         this.linearOpMode = linearOpMode;
         hardwareMap = linearOpMode.hardwareMap;
+        telemetry = linearOpMode.telemetry;
         gamepad2 = linearOpMode.gamepad2;
 
         motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
@@ -38,27 +42,60 @@ public class LiftPosition {
     }
     private State state = State.HOLD;
     public void Pos0(){
-        motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if(gamepad2.x) {
-            while (motor1.getCurrentPosition() > 0 && motor2.getCurrentPosition() > 0) {
-                motor1.setPower(-0.5);
-                motor2.setPower(-0.5);
+        if(gamepad2.y) {
+            while (motor1.getCurrentPosition() < -200) {
+                motor1.setPower(1);
+                motor2.setPower(1);
             }
+            motor1.setPower(0);
+            motor2.setPower(0);
         }
     }
     public void Pos1(){
-        motor1.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        motor2.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if(gamepad2.y) {
-            while (motor1.getCurrentPosition() < 100 && motor2.getCurrentPosition() < 100) {
-                motor1.setPower(0.5);
-                motor2.setPower(0.5);
+        if(gamepad2.a) {
+            while (motor1.getCurrentPosition() > -1400) {
+                motor1.setPower(-1);
+                motor2.setPower(-1);
             }
+            motor1.setPower(0);
+            motor2.setPower(0);
         }
     }
+    public void Pos2(){
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if(gamepad2.b) {
+            while (motor1.getCurrentPosition() > -2800) {
+                motor1.setPower(-1);
+                motor2.setPower(-1);
+            }
+            motor1.setPower(0);
+            motor2.setPower(0);
+        }
+    }
+    // Pos 3 is correct variant
+    public void Pos3(){
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if(gamepad2.x) {
+            while (motor1.getCurrentPosition() > -4200) {
+                motor1.setPower(-1);
+                motor2.setPower(-1);
+            }
+                motor1.setPower(0);
+                motor2.setPower(0);
+        }
+
+    }
+
     public void Retention(){
         if (gamepad2.x != true && gamepad2.y != true){
             motor1.setPower(-kP * motor1.getCurrentPosition()+kF);

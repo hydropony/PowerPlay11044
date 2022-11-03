@@ -55,7 +55,7 @@ public class EzTeleop extends LinearOpMode {
 
         while (!isStopRequested()) {
             LiftPosition lift = new LiftPosition(this);
-            //Lift lift = new Lift(this);
+            Lift liftik = new Lift(this);
             double ref = 50;
             err = ref - stCh.getCurrentPosition();
             konst = 0.7;
@@ -64,7 +64,12 @@ public class EzTeleop extends LinearOpMode {
             double y = -gamepad1.left_stick_y;
             double x = gamepad1.left_stick_x;
             double rotation = gamepad1.right_trigger - gamepad1.left_trigger;
-            //boolean rotationSlow = gamepad1.right_bumper;
+            boolean rotationSlowRight = gamepad1.right_bumper;
+            boolean rotationSlowLeft = gamepad1.left_bumper;
+            boolean ySlowDown = gamepad1.dpad_down;
+            boolean ySlowUp = gamepad1.dpad_up;
+            boolean xslowRight = gamepad1.dpad_right;
+            boolean xSlowLeft = gamepad1.dpad_left;
             double lfpower, lbpower, rfpower, rbpower;
             lfpower = y + x + rotation;
             lbpower = y - x + rotation;
@@ -86,6 +91,42 @@ public class EzTeleop extends LinearOpMode {
             lb.setPower(-lbpower);
             rf.setPower(-rfpower);
             rb.setPower(-rbpower);
+            if(rotationSlowRight){
+                lf.setPower(-0.5);
+                lb.setPower(-0.5);
+                rf.setPower(0.5);
+                rb.setPower(0.5);
+            }
+            if(rotationSlowLeft){
+                lf.setPower(0.5);
+                lb.setPower(0.5);
+                rf.setPower(-0.5);
+                rb.setPower(-0.5);
+            }
+            if (ySlowDown){
+                lf.setPower(-0.5);
+                lb.setPower(0.5);
+                rf.setPower(0.5);
+                rb.setPower(0.5);
+            }
+            if(ySlowUp){
+                lf.setPower(0.5);
+                lb.setPower(-0.5);
+                rf.setPower(-0.5);
+                rb.setPower(-0.5);
+            }
+            if (xSlowLeft){
+                lf.setPower(0.5);
+                lb.setPower(-0.5);
+                rf.setPower(-0.5);
+                rb.setPower(0.5);
+            }
+            if (xslowRight){
+                lf.setPower(-0.5);
+                lb.setPower(0.5);
+                rf.setPower(0.5);
+                rb.setPower(-0.5);
+            }
 
             stCh.setPower(gamepad2.right_stick_y);
 
@@ -113,7 +154,10 @@ public class EzTeleop extends LinearOpMode {
 
             lift.Pos0();
             lift.Pos1();
+            lift.Pos3();
+            lift.Pos2();
             lift.Retention();
+            liftik.teleop();
 
         }
 
@@ -121,6 +165,7 @@ public class EzTeleop extends LinearOpMode {
         if(Math.abs(err) > 30){
             stCh.setPower(gamepad2.right_stick_y*konst1);
         }
+
 
     }
 }
