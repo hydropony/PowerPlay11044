@@ -52,10 +52,10 @@ public class Lift {
 
     public void teleop() {
 
-        motor1.setPower(gamepad2.left_stick_y + kF);
-       motor2.setPower(gamepad2.left_stick_y + kF);
+        motor1.setPower(gamepad2.left_stick_y);
+       motor2.setPower(gamepad2.left_stick_y);
 
-        if (Math.abs(gamepad2.left_stick_y) > 0)
+        /* if (Math.abs(gamepad2.left_stick_y) > 0)
             state = State.TELE;
         else
             state = State.HOLD;
@@ -68,7 +68,7 @@ public class Lift {
                 motor1.setPower(gamepad2.left_stick_y + kF);
                motor2.setPower(gamepad2.left_stick_y + kF);
 
-        }
+        }*/
         telemetry.addData("lift",motor1.getCurrentPosition());
         telemetry.update();
       /*  if(gamepad2.a) {
