@@ -41,13 +41,13 @@ public class LiftPosition {
         TELE
     }
     private State state = State.HOLD;
-    public void Pos0(){
+    /*public void Pos0(){
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if(gamepad2.y) {
-            while (motor1.getCurrentPosition() < -200) {
-                motor1.setPower(1);
+        if(gamepad2.dpad_left) {
+            while (motor1.getCurrentPosition() > 30) {
+                motor1.setPower(-1);
                 motor2.setPower(1);
             }
             motor1.setPower(0);
@@ -58,9 +58,9 @@ public class LiftPosition {
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if(gamepad2.a) {
-            while (motor1.getCurrentPosition() > -1400) {
-                motor1.setPower(-1);
+        if(gamepad2.dpad_down) {
+            while (motor1.getCurrentPosition() < 1450) {
+                motor1.setPower(1);
                 motor2.setPower(-1);
             }
             motor1.setPower(0);
@@ -71,9 +71,9 @@ public class LiftPosition {
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if(gamepad2.b) {
-            while (motor1.getCurrentPosition() > -2800) {
-                motor1.setPower(-1);
+        if(gamepad2.dpad_right) {
+            while (motor1.getCurrentPosition() < 2000) {
+                motor1.setPower(1);
                 motor2.setPower(-1);
             }
             motor1.setPower(0);
@@ -85,16 +85,16 @@ public class LiftPosition {
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if(gamepad2.x) {
-            while (motor1.getCurrentPosition() > -4200) {
-                motor1.setPower(-1);
+        if(gamepad2.dpad_up) {
+            while (motor1.getCurrentPosition() < 2500) {
+                motor1.setPower(1);
                 motor2.setPower(-1);
             }
                 motor1.setPower(0);
                 motor2.setPower(0);
         }
 
-    }
+    }*/
 
     public void Retention(){
         if (gamepad2.x != true && gamepad2.y != true){

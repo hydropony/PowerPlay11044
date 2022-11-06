@@ -26,10 +26,11 @@ public class EncoderMecanumDrive {
         leftRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rightRear.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        leftFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightFront.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        leftRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        rightRear.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         pos = 0;
     }
@@ -103,6 +104,15 @@ public class EncoderMecanumDrive {
             rightRear.setPower(speed);
         }
 
+    public void TagId12(){
+
+            while (leftFront.getCurrentPosition() > -2000) {
+               leftFront.setPower(-0.5);
+                rightFront.setPower(0.5);
+                rightRear.setPower(0.5);
+                leftRear.setPower(0.5);
+        }
+    }
         /* leftFront.setPower(0);
         rightFront.setPower(0);
         leftRear.setPower(0);

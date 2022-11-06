@@ -15,19 +15,26 @@ public class Lift {
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
     private Gamepad gamepad2;
-    private CRServo servo3;
-    private CRServo servo2;
 
     private double kF = 0;
-    private double kP = 0;
+    private double kP = 0.01;
+    private double error;
+    private double intakePos = 0;
+    private double lowPos = 1400;
+    private double middlePos = 2000;
+    private double highPos = 2500;
+    private double groundPos = 300;
     private DcMotorEx motor1, motor2;
-    //private DcMotorEx motor2;
 
     private enum State {
-        HOLD,
-        TELE
+        BYPASS,
+        INTAKE,
+        GROUND,
+        LOW,
+        MIDDLE,
+        HIGH
     }
-    private State state = State.HOLD;
+    private State state = State.BYPASS;
 
     public Lift(LinearOpMode linearOpMode) {
         this.linearOpMode = linearOpMode;
@@ -35,25 +42,81 @@ public class Lift {
         telemetry = linearOpMode.telemetry;
         gamepad2 = linearOpMode.gamepad2;
 
-        servo2 = hardwareMap.get(CRServo.class, "servo2");
-        servo3 = hardwareMap.get(CRServo.class, "servo3");
-
         motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
         motor2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
 
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor1.setDirection(DcMotorSimple.Direction.FORWARD);
-        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        motor2.setDirection(DcMotorSimple.Direction.FORWARD);
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         telemetry.addData("", "Lift initialized!");
+    }
+    public void update(){
+        if (gamepad2.dpad_down){
+            state = State.INTAKE;
+        }
+        if (gamepad2.dpad_up){
+            state = State.HIGH;
+        }
+        if (gamepad2.dpad_left){
+            state = State.LOW;
+        }
+        if (gamepad2.dpad_right){
+            state = State.MIDDLE;
+        }
+        if(gamepad2.right_bumper){
+            state = State.BYPASS;
+        }
+        if(gamepad2.left_bumper){
+            state = State.GROUND;
+        }
+        switch (state) {
+            case BYPASS:
+                motor1.setPower(gamepad2.left_stick_y);
+                motor2.setPower(gamepad2.left_stick_y);
+                break;
+            case INTAKE:
+                error = intakePos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case GROUND:
+                error = groundPos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case LOW:
+                error = lowPos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case MIDDLE:
+                error = middlePos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case HIGH:
+                error = highPos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+        }
+        telemetry.addData("gamepad", gamepad2.left_stick_y);
+        telemetry.addData("error", error);
+        telemetry.addData("lift",motor1.getCurrentPosition());
+        telemetry.addData("state", state);
+        telemetry.update();
+
+
     }
 
     public void teleop() {
 
         motor1.setPower(gamepad2.left_stick_y);
        motor2.setPower(gamepad2.left_stick_y);
+
 
         /* if (Math.abs(gamepad2.left_stick_y) > 0)
             state = State.TELE;
@@ -69,6 +132,7 @@ public class Lift {
                motor2.setPower(gamepad2.left_stick_y + kF);
 
         }*/
+
         telemetry.addData("lift",motor1.getCurrentPosition());
         telemetry.update();
       /*  if(gamepad2.a) {
@@ -89,5 +153,59 @@ public class Lift {
             servo3.setPower(0);
             servo2.setPower(0);
         }*/
+    }
+    public void Pos0(){
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if(gamepad2.dpad_left) {
+            while (motor1.getCurrentPosition() > 30) {
+                motor1.setPower(-1);
+                motor2.setPower(1);
+            }
+            motor1.setPower(0);
+            motor2.setPower(0);
+        }
+    }
+    public void Pos1(){
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if(gamepad2.dpad_down) {
+            while (motor1.getCurrentPosition() < 1450) {
+                motor1.setPower(1);
+                motor2.setPower(-1);
+            }
+            motor1.setPower(0);
+            motor2.setPower(0);
+        }
+    }
+    public void Pos2(){
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if(gamepad2.dpad_right) {
+            while (motor1.getCurrentPosition() < 2000) {
+                motor1.setPower(1);
+                motor2.setPower(-1);
+            }
+            motor1.setPower(0);
+            motor2.setPower(0);
+        }
+    }
+    // Pos 3 is correct variant
+    public void Pos3(){
+        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        if(gamepad2.dpad_up) {
+            while (motor1.getCurrentPosition() < 2500) {
+                motor1.setPower(1);
+                motor2.setPower(-1);
+            }
+            motor1.setPower(0);
+            motor2.setPower(0);
+        }
+
     }
 }

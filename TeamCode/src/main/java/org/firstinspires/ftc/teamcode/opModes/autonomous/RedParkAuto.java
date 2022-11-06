@@ -73,7 +73,7 @@ public class RedParkAuto extends LinearOpMode {
         motor.setDirection(DcMotorSimple.Direction.FORWARD);
 
         while (!isStarted()){
-            motor.setPower(-0.25);
+            //motor.setPower(-0.25);
             //VR.position();
         }
 
@@ -134,13 +134,13 @@ public class RedParkAuto extends LinearOpMode {
             telemetry.update();
 
         }
-        while (!isStarted()&& Math.abs(R.virtual4bar.error) > 100){
+        while (!isStarted()){
           // R.virtual4bar.slowDownMovement();
 
 
         }
 
-        while (!isStopRequested() && Math.abs(R.virtual4bar.error) > 30) {
+        while (!isStopRequested()) {
            // R.virtual4bar.slowDownMovement(100);
             //R.virtual4bar.position(100);
             sleep(1000);
