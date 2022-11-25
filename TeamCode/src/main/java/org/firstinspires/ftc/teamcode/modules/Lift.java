@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -20,10 +21,10 @@ public class Lift {
     private double kP = 0.01;
     private double error;
     private double intakePos = 0;
-    private double lowPos = 1400;
-    private double middlePos = 2000;
-    private double highPos = 2500;
-    private double groundPos = 300;
+    private double lowPos = -2000;
+    private double middlePos = -2500;
+    private double highPos = -4300;
+    private double groundPos = -300;
     private DcMotorEx motor1, motor2;
 
     private enum State {
@@ -32,7 +33,8 @@ public class Lift {
         GROUND,
         LOW,
         MIDDLE,
-        HIGH
+        HIGH,
+        NULL
     }
     private State state = State.BYPASS;
 
@@ -41,6 +43,7 @@ public class Lift {
         hardwareMap = linearOpMode.hardwareMap;
         telemetry = linearOpMode.telemetry;
         gamepad2 = linearOpMode.gamepad2;
+
 
         motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
         motor2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
@@ -54,6 +57,7 @@ public class Lift {
         telemetry.addData("", "Lift initialized!");
     }
     public void update(){
+
         if (gamepad2.dpad_down){
             state = State.INTAKE;
         }
@@ -72,7 +76,18 @@ public class Lift {
         if(gamepad2.left_bumper){
             state = State.GROUND;
         }
+        if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > 0){
+            state = State.NULL;
+        }
+        else{
+            state = State.BYPASS;
+        }
+
         switch (state) {
+            case NULL:
+                motor1.setPower(0);
+                motor2.setPower(0);
+                break;
             case BYPASS:
                 motor1.setPower(gamepad2.left_stick_y);
                 motor2.setPower(gamepad2.left_stick_y);
@@ -154,18 +169,15 @@ public class Lift {
             servo2.setPower(0);
         }*/
     }
-    public void Pos0(){
-        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+    public void Pos0() {
 
-        if(gamepad2.dpad_left) {
-            while (motor1.getCurrentPosition() > 30) {
-                motor1.setPower(-1);
-                motor2.setPower(1);
-            }
-            motor1.setPower(0);
-            motor2.setPower(0);
+        ElapsedTime t = new ElapsedTime();
+        while (t.milliseconds() < 2300) {
+            motor1.setPower(-1);
+            motor2.setPower(-1);
         }
+        motor1.setPower(0);
+        motor2.setPower(0);
     }
     public void Pos1(){
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
