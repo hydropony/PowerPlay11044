@@ -22,21 +22,20 @@ public class Lift {
     private double error;
     private double intakePos = 0;
     private double lowPos = -2000;
-    private double middlePos = -2500;
+    private double middlePos = -2800;
     private double highPos = -4300;
     private double groundPos = -300;
     private DcMotorEx motor1, motor2;
 
-    private enum State {
+    public enum State {
         BYPASS,
         INTAKE,
         GROUND,
         LOW,
         MIDDLE,
         HIGH,
-        NULL
     }
-    private State state = State.BYPASS;
+    public State state = State.BYPASS;
 
     public Lift(LinearOpMode linearOpMode) {
         this.linearOpMode = linearOpMode;
@@ -61,36 +60,35 @@ public class Lift {
         if (gamepad2.dpad_down){
             state = State.INTAKE;
         }
-        if (gamepad2.dpad_up){
+        else if (gamepad2.dpad_up){
             state = State.HIGH;
         }
-        if (gamepad2.dpad_left){
+        else if (gamepad2.dpad_left){
             state = State.LOW;
         }
-        if (gamepad2.dpad_right){
+        else if (gamepad2.dpad_right){
             state = State.MIDDLE;
         }
-        if(gamepad2.right_bumper){
+        else if(gamepad2.right_bumper){
             state = State.BYPASS;
         }
-        if(gamepad2.left_bumper){
+        else if(gamepad2.left_bumper){
             state = State.GROUND;
-        }
-        if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > 0){
-            state = State.NULL;
         }
         else{
             state = State.BYPASS;
         }
 
         switch (state) {
-            case NULL:
-                motor1.setPower(0);
-                motor2.setPower(0);
-                break;
             case BYPASS:
-                motor1.setPower(gamepad2.left_stick_y);
-                motor2.setPower(gamepad2.left_stick_y);
+                if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > 0){
+                    motor1.setPower(0);
+                    motor2.setPower(0);
+                }
+                else{
+                    motor1.setPower(gamepad2.left_stick_y);
+                    motor2.setPower(gamepad2.left_stick_y);
+                }
                 break;
             case INTAKE:
                 error = intakePos - motor1.getCurrentPosition();
@@ -111,6 +109,65 @@ public class Lift {
                 error = middlePos - motor1.getCurrentPosition();
                 motor1.setPower(kP * error);
                 motor2.setPower(kP * error);
+                break;
+            case HIGH:
+                error = highPos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+        }
+        telemetry.addData("gamepad", gamepad2.left_stick_y);
+        telemetry.addData("error", error);
+        telemetry.addData("lift",motor1.getCurrentPosition());
+        telemetry.addData("state", state);
+        telemetry.update();
+
+
+    }
+
+    public void updateavto(){
+        /*error = lowPos - motor1.getCurrentPosition();
+        motor1.setPower(kP * error);
+        motor2.setPower(kP * error);*/
+        switch (state) {
+            case BYPASS:
+                if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > 0){
+                    motor1.setPower(0);
+                    motor2.setPower(0);
+                }
+                else{
+                    motor1.setPower(gamepad2.left_stick_y);
+                    motor2.setPower(gamepad2.left_stick_y);
+                }
+                break;
+            case INTAKE:
+                error = intakePos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case GROUND:
+                error = groundPos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case LOW:
+                error = lowPos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case MIDDLE:
+                while (motor1.getCurrentPosition() > middlePos){
+                    motor1.setPower(-1);
+                    motor2.setPower(-1);
+                }
+
+                motor1.setPower(0);
+                motor2.setPower(0);
+
+                /*
+                error = middlePos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);*/
                 break;
             case HIGH:
                 error = highPos - motor1.getCurrentPosition();
