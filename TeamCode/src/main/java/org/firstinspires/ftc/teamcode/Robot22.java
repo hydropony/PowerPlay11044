@@ -2,7 +2,9 @@ package org.firstinspires.ftc.teamcode;
 
 import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.modules.Intake;
@@ -10,10 +12,12 @@ import org.firstinspires.ftc.teamcode.modules.Lift;
 import org.firstinspires.ftc.teamcode.modules.Virtual4bar;
 
 public class Robot22 extends Robot {
-    private SampleMecanumDrive drive;
+    public SampleMecanumDrive drive;
     public Lift lift;
     public Intake intake;
     public double k = 0.5;
+    CRServo servo3;
+    CRServo servo2;
     public double heading, x, y;
 
     public Robot22(LinearOpMode opMode) {
@@ -29,10 +33,24 @@ public class Robot22 extends Robot {
     }
 
     public void control() {
+        servo2 = hardwareMap.get(CRServo.class, "servo2");
+        servo3 = hardwareMap.get(CRServo.class, "servo3");
         heading = drive.getRawExternalHeading();
         x = -gamepad1.left_stick_y;
         y = -gamepad1.left_stick_x;
 
+        if(gamepad2.right_stick_y > 0) {
+            servo3.setPower(1);
+            servo2.setPower(-1);
+        }
+        else if(gamepad2.right_stick_y < 0) {
+            servo3.setPower(-1);
+            servo2.setPower(1);
+        }
+        else {
+            servo3.setPower(0);
+            servo2.setPower(0);
+        }
         if(gamepad1.dpad_up){
             drive.setWeightedDrivePower(
                     new Pose2d(
@@ -87,7 +105,7 @@ public class Robot22 extends Robot {
                     )
             );
         }
-      /* else {
+      else {
             drive.setWeightedDrivePower(
                     new Pose2d(
                             -gamepad1.left_stick_y,
@@ -95,8 +113,8 @@ public class Robot22 extends Robot {
                             -(gamepad1.right_trigger - gamepad1.left_trigger)
                     )
             );
-        }*/
-        else {
+        }
+      /*  else {
             drive.setWeightedDrivePower(
                     new Pose2d(
                             x * Math.cos(heading) - y * Math.sin(heading),
@@ -104,7 +122,7 @@ public class Robot22 extends Robot {
                             -(gamepad1.right_trigger - gamepad1.left_trigger)
                     )
             );
-        }
+        }*/
 
        telemetry.addData("heading", heading);
         lift.update();
