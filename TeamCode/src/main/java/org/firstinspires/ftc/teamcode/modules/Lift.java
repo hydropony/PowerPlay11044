@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
+
 
 import org.firstinspires.ftc.robotcore.external.Telemetry;
 
@@ -16,16 +18,27 @@ public class Lift {
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
     private Gamepad gamepad2;
+    private DigitalChannel digitalTouch;
+
+    /*
+
+
+ digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+ digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+
+     */
 
     private double kF = 0;
     private double kP = 0.01;
     private double error;
     private double intakePos = 0;
     private double lowPos = -2000;
-    private double middlePos = -2800;
+    private double middlePos = -2900;
+    private double nwZero = 0;
     private double highPos = -4300;
     private double groundPos = -300;
     private DcMotorEx motor1, motor2;
+    private boolean candonwz = false;
 
     public enum State {
         BYPASS,
@@ -34,6 +47,8 @@ public class Lift {
         LOW,
         MIDDLE,
         HIGH,
+        NWZERO,
+        CANDON,
     }
     public State state = State.BYPASS;
 
@@ -53,12 +68,26 @@ public class Lift {
         motor2.setDirection(DcMotorSimple.Direction.FORWARD);
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+
         telemetry.addData("", "Lift initialized!");
     }
+
+    private int znakdbl( double a){
+        if (a > 0)
+            return 1;
+        else if (a < 0)
+            return -1;
+        else
+            return 0;
+    }
+
     public void update(){
 
         if (gamepad2.dpad_down){
-            state = State.INTAKE;
+            state = State.NWZERO;
         }
         else if (gamepad2.dpad_up){
             state = State.HIGH;
@@ -75,13 +104,16 @@ public class Lift {
         else if(gamepad2.left_bumper){
             state = State.GROUND;
         }
+        else if(gamepad2.x){
+            state = State.CANDON;
+        }
         else{
             state = State.BYPASS;
         }
 
         switch (state) {
             case BYPASS:
-                if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > 0){
+               if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > nwZero){
                     motor1.setPower(0);
                     motor2.setPower(0);
                 }
@@ -89,11 +121,24 @@ public class Lift {
                     motor1.setPower(gamepad2.left_stick_y);
                     motor2.setPower(gamepad2.left_stick_y);
                 }
+                if (Math.abs(gamepad2.left_stick_x) > 0.7 && candonwz) {
+                    motor1.setPower(znakdbl(gamepad2.left_stick_x) * 0.25);
+                    motor2.setPower(znakdbl(gamepad2.left_stick_x) * 0.25);
+                }
                 break;
             case INTAKE:
                 error = intakePos - motor1.getCurrentPosition();
                 motor1.setPower(kP * error);
                 motor2.setPower(kP * error);
+                break;
+            case NWZERO:
+                nwZero = motor1.getCurrentPosition();
+                break;
+            case CANDON:
+                if (candonwz)
+                    candonwz = false;
+                else
+                    candonwz = true;
                 break;
             case GROUND:
                 error = groundPos - motor1.getCurrentPosition();
@@ -125,13 +170,32 @@ public class Lift {
 
     }
 
+    public void DoZeroLift_DigitalSensor(){
+        if (!(digitalTouch.getState())){
+            while (!(digitalTouch.getState())){
+                motor1.setPower(-1);
+                motor2.setPower(-1);
+            }
+            motor1.setPower(0);
+            motor2.setPower(0);
+        }
+        while ((digitalTouch.getState())){
+            motor1.setPower(0.25);
+            motor2.setPower(0.25);
+        }
+        motor1.setPower(0);
+        motor2.setPower(0);
+        nwZero = motor1.getCurrentPosition();
+    }
+
+
     public void updateavto(){
         /*error = lowPos - motor1.getCurrentPosition();
         motor1.setPower(kP * error);
         motor2.setPower(kP * error);*/
         switch (state) {
             case BYPASS:
-                if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > 0){
+                if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > nwZero){
                     motor1.setPower(0);
                     motor2.setPower(0);
                 }
