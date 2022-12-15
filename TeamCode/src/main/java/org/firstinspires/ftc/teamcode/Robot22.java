@@ -4,6 +4,7 @@ import com.acmerobotics.roadrunner.geometry.Pose2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DigitalChannel;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -12,6 +13,7 @@ import org.firstinspires.ftc.teamcode.modules.Lift;
 import org.firstinspires.ftc.teamcode.modules.Virtual4bar;
 
 public class Robot22 extends Robot {
+    public DigitalChannel digitalTouch;
     public SampleMecanumDrive drive;
     public Lift lift;
     public Intake intake;
@@ -26,6 +28,8 @@ public class Robot22 extends Robot {
         lift = new Lift(opMode);
         intake = new Intake(opMode);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
 
         telemetry.addData("Init ready!", "");
@@ -39,6 +43,10 @@ public class Robot22 extends Robot {
         x = -gamepad1.left_stick_y;
         y = -gamepad1.left_stick_x;
 
+        if (gamepad2.y){
+            lift.DoZeroLift_DigitalSensor();
+        }
+
         if(gamepad2.right_stick_y > 0) {
             servo3.setPower(1);
             servo2.setPower(-1);
@@ -46,6 +54,20 @@ public class Robot22 extends Robot {
         else if(gamepad2.right_stick_y < 0) {
             servo3.setPower(-1);
             servo2.setPower(1);
+        }
+        else if(digitalTouch.getState() == true){
+            if(gamepad2.right_stick_y > 0) {
+                servo3.setPower(0);
+                servo2.setPower(0);
+            }
+            else if(gamepad2.right_stick_y < 0) {
+                servo3.setPower(-1);
+                servo2.setPower(1);
+            }
+            else{
+                servo3.setPower(0);
+                servo2.setPower(0);
+            }
         }
         else {
             servo3.setPower(0);
@@ -127,6 +149,6 @@ public class Robot22 extends Robot {
        telemetry.addData("heading", heading);
         lift.update();
         drive.update();
-        intake.teleop();
+        //intake.teleop();
     }
 }

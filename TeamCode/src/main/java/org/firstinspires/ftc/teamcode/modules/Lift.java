@@ -65,7 +65,7 @@ public class Lift {
         motor1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         motor1.setDirection(DcMotorSimple.Direction.FORWARD);
-        motor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        motor2.setDirection(DcMotorSimple.Direction.REVERSE);
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -113,18 +113,22 @@ public class Lift {
 
         switch (state) {
             case BYPASS:
-               if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > nwZero){
+               if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() < nwZero){
                     motor1.setPower(0);
                     motor2.setPower(0);
                 }
                 else{
-                    motor1.setPower(gamepad2.left_stick_y);
-                    motor2.setPower(gamepad2.left_stick_y);
+                    motor1.setPower(-gamepad2.left_stick_y);
+                    motor2.setPower(-gamepad2.left_stick_y);
                 }
                 if (Math.abs(gamepad2.left_stick_x) > 0.7 && candonwz) {
                     motor1.setPower(znakdbl(gamepad2.left_stick_x) * 0.25);
                     motor2.setPower(znakdbl(gamepad2.left_stick_x) * 0.25);
                 }
+                /*if(gamepad2.left_stick_y == 0){
+                    motor1.setPower(0.25);
+                    motor2.setPower(0.25);
+                }*/
                 break;
             case INTAKE:
                 error = intakePos - motor1.getCurrentPosition();
@@ -160,6 +164,11 @@ public class Lift {
                 motor1.setPower(kP * error);
                 motor2.setPower(kP * error);
                 break;
+        }
+        if (digitalTouch.getState() == true) {
+            telemetry.addData("Digital Touch", "Is Not Pressed");
+        } else {
+            telemetry.addData("Digital Touch", "Is Pressed");
         }
         telemetry.addData("gamepad", gamepad2.left_stick_y);
         telemetry.addData("error", error);
