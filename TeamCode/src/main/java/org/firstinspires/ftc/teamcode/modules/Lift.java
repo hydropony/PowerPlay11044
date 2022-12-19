@@ -17,8 +17,8 @@ public class Lift {
     private HardwareMap hardwareMap;
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
-    private Gamepad gamepad2;
-    private DigitalChannel digitalTouch;
+    private Gamepad gamepad1;
+    //private DigitalChannel digitalTouch;
 
     /*
 
@@ -56,7 +56,7 @@ public class Lift {
         this.linearOpMode = linearOpMode;
         hardwareMap = linearOpMode.hardwareMap;
         telemetry = linearOpMode.telemetry;
-        gamepad2 = linearOpMode.gamepad2;
+        gamepad1 = linearOpMode.gamepad1;
 
 
         motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
@@ -69,8 +69,8 @@ public class Lift {
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
-        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        //digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
         telemetry.addData("", "Lift initialized!");
     }
@@ -86,10 +86,10 @@ public class Lift {
 
     public void update(){
 
-        if (gamepad2.dpad_down){
+        if (gamepad1.y){
             state = State.NWZERO;
         }
-        else if (gamepad2.dpad_up){
+        /*else if (gamepad2.dpad_up){
             state = State.HIGH;
         }
         else if (gamepad2.dpad_left){
@@ -97,14 +97,14 @@ public class Lift {
         }
         else if (gamepad2.dpad_right){
             state = State.MIDDLE;
-        }
-        else if(gamepad2.right_bumper){
+        }*/
+        else if(gamepad1.left_bumper){
             state = State.BYPASS;
         }
-        else if(gamepad2.left_bumper){
+        /*else if(gamepad2.left_bumper){
             state = State.GROUND;
-        }
-        else if(gamepad2.x){
+        }*/
+        else if(gamepad1.x){
             state = State.CANDON;
         }
         else{
@@ -113,17 +113,21 @@ public class Lift {
 
         switch (state) {
             case BYPASS:
-               if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() < nwZero){
+               if(gamepad1.right_stick_y >= 0 && motor1.getCurrentPosition() < nwZero){
                     motor1.setPower(0);
                     motor2.setPower(0);
                 }
+                else if(gamepad1.right_stick_y < 0){
+                   motor1.setPower(-gamepad1.right_stick_y * 0.75);
+                   motor2.setPower(-gamepad1.right_stick_y * 0.75);
+               }
                 else{
-                    motor1.setPower(-gamepad2.left_stick_y);
-                    motor2.setPower(-gamepad2.left_stick_y);
+                    motor1.setPower(-gamepad1.right_stick_y);
+                    motor2.setPower(-gamepad1.right_stick_y);
                 }
-                if (Math.abs(gamepad2.left_stick_x) > 0.7 && candonwz) {
-                    motor1.setPower(znakdbl(gamepad2.left_stick_x) * 0.25);
-                    motor2.setPower(znakdbl(gamepad2.left_stick_x) * 0.25);
+                if (Math.abs(gamepad1.right_stick_x) > 0.7 && candonwz) {
+                    motor1.setPower(znakdbl(gamepad1.right_stick_x) * 0.25);
+                    motor2.setPower(znakdbl(gamepad1.right_stick_x) * 0.25);
                 }
                 /*if(gamepad2.left_stick_y == 0){
                     motor1.setPower(0.25);
@@ -165,12 +169,12 @@ public class Lift {
                 motor2.setPower(kP * error);
                 break;
         }
-        if (digitalTouch.getState() == true) {
+        /*if (digitalTouch.getState() == true) {
             telemetry.addData("Digital Touch", "Is Not Pressed");
         } else {
             telemetry.addData("Digital Touch", "Is Pressed");
-        }
-        telemetry.addData("gamepad", gamepad2.left_stick_y);
+        }*/
+        telemetry.addData("gamepad", gamepad1.left_stick_y);
         telemetry.addData("error", error);
         telemetry.addData("lift",motor1.getCurrentPosition());
         telemetry.addData("state", state);
@@ -180,7 +184,7 @@ public class Lift {
     }
 
     public void DoZeroLift_DigitalSensor(){
-        if (!(digitalTouch.getState())){
+        /*if (!(digitalTouch.getState())){
             while (!(digitalTouch.getState())){
                 motor1.setPower(-1);
                 motor2.setPower(-1);
@@ -191,7 +195,7 @@ public class Lift {
         while ((digitalTouch.getState())){
             motor1.setPower(0.25);
             motor2.setPower(0.25);
-        }
+        }*/
         motor1.setPower(0);
         motor2.setPower(0);
         nwZero = motor1.getCurrentPosition();
@@ -204,13 +208,13 @@ public class Lift {
         motor2.setPower(kP * error);*/
         switch (state) {
             case BYPASS:
-                if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > nwZero){
+                if(gamepad1.right_stick_y >= 0 && motor1.getCurrentPosition() > nwZero){
                     motor1.setPower(0);
                     motor2.setPower(0);
                 }
                 else{
-                    motor1.setPower(gamepad2.left_stick_y);
-                    motor2.setPower(gamepad2.left_stick_y);
+                    motor1.setPower(gamepad1.right_stick_y);
+                    motor2.setPower(gamepad1.right_stick_y);
                 }
                 break;
             case INTAKE:
@@ -248,7 +252,7 @@ public class Lift {
                 motor2.setPower(kP * error);
                 break;
         }
-        telemetry.addData("gamepad", gamepad2.left_stick_y);
+        telemetry.addData("gamepad", gamepad1.left_stick_y);
         telemetry.addData("error", error);
         telemetry.addData("lift",motor1.getCurrentPosition());
         telemetry.addData("state", state);
@@ -259,8 +263,8 @@ public class Lift {
 
     public void teleop() {
 
-        motor1.setPower(gamepad2.left_stick_y);
-       motor2.setPower(gamepad2.left_stick_y);
+        motor1.setPower(gamepad1.right_stick_y);
+       motor2.setPower(gamepad1.right_stick_y);
 
 
         /* if (Math.abs(gamepad2.left_stick_y) > 0)
@@ -300,16 +304,32 @@ public class Lift {
         }*/
     }
     public void Pos0() {
+        error = 6000 - motor1.getCurrentPosition();
+        motor1.setPower(-kP * error);
+        motor2.setPower(-kP * error);
 
-        ElapsedTime t = new ElapsedTime();
-        while (t.milliseconds() < 2300) {
-            motor1.setPower(-1);
-            motor2.setPower(-1);
+        /*ElapsedTime t = new ElapsedTime();
+        while (t.milliseconds() < 4000) {
+            motor1.setPower(1);
+            motor2.setPower(1);
         }
         motor1.setPower(0);
-        motor2.setPower(0);
+        motor2.setPower(0);*/
     }
-    public void Pos1(){
+    public void Pos1() {
+        error = 6000 - motor1.getCurrentPosition();
+        motor1.setPower(kP * error);
+        motor2.setPower(kP * error);
+
+        /*ElapsedTime t = new ElapsedTime();
+        while (t.milliseconds() < 4000) {
+            motor1.setPower(1);
+            motor2.setPower(1);
+        }
+        motor1.setPower(0);
+        motor2.setPower(0);*/
+    }
+   /* public void Pos1(){
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
@@ -349,5 +369,5 @@ public class Lift {
             motor2.setPower(0);
         }
 
-    }
+    }*/
 }
