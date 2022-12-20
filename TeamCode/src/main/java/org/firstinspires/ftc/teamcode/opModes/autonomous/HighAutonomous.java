@@ -35,11 +35,12 @@ public class HighAutonomous extends LinearOpMode {
     double cx = 402.145;
     double cy = 221.506;
     public static double run = 50;
-    public static double runHigh = 10;
-    public static double runHighBack = -6;
-    public static double ParkSecond= -24;
-    public static double leftT = 24;
+    public static double runHigh = 11;
+    public static double runHighBack = -4;
+    public static double ParkSecond= -23.5;
+    public static double leftT = 31;
     public static double rightT = 23;
+    public static double simvolichno = 2;
 
     // UNITS ARE METERS
     double tagsize = 0.166;
@@ -59,20 +60,26 @@ public class HighAutonomous extends LinearOpMode {
         Trajectory forward = R.drive.trajectoryBuilder(new Pose2d(0,0))
                 .forward(run)
                 .build();
-        Trajectory runToHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-43))))
+        /*Trajectory runSecondPosition3 = R.drive.trajectoryBuilder(new Pose2d(12,0))
+                .forward(-ParkSecond)
+                .build();*/
+        Trajectory runToHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-46))))
                 .forward(runHigh)
                 .build();
-        Trajectory runFromHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-43))))
+        Trajectory runFromHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-46))))
                 .forward(runHighBack)
                 .build();
-        Trajectory runSecondPosition = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(0))))
+        Trajectory runSecondPosition = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0)))
                 .forward(ParkSecond)
                 .build();
-        Trajectory forwardLEFTT = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(90))))
+        Trajectory forwardLEFTT = R.drive.trajectoryBuilder(/*forward.end().plus(*/new Pose2d(20,0,Math.toRadians(90)))
                 .forward(leftT)
                 .build();
-        Trajectory forwardRIGHTT = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
+        Trajectory forwardRIGHTT = R.drive.trajectoryBuilder(/*forward.end().plus(*/new Pose2d(20,0,Math.toRadians(-90)))
                 .forward(rightT)
+                .build();
+        Trajectory vBokLeft = R.drive.trajectoryBuilder(forward.end().plus(forwardLEFTT.end().plus(new Pose2d(0,0,Math.toRadians(0)))))
+                .forward(simvolichno)
                 .build();
        /* Trajectory forwardRIGHT = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
                 .forward(right)
@@ -162,27 +169,31 @@ public class HighAutonomous extends LinearOpMode {
         //R.drive.followTrajectory(forward);
         // R.lift.state = Lift.State.MIDDLE;
         R.drive.followTrajectory(forward);
-        R.drive.turn(Math.toRadians(-43));
+        R.drive.turn(Math.toRadians(-46));
         R.lift.Pos0();
         R.drive.followTrajectory(runToHigh);
         sleep(100);
         servoClass.run();
         R.drive.followTrajectory(runFromHigh);
         R.lift.Pos1();
-        R.drive.turn(Math.toRadians(43));
+        R.drive.turn(Math.toRadians(46));
         R.drive.followTrajectory(runSecondPosition);
+        sleep(100);
+        //R.drive.followTrajectory(runSecondPosition3);
+        R.drive.turn(0);
         /*while(R.drive.isBusy() && !isStopRequested()){
             R.lift.updateavto();
             //R.drive.followTrajectoryAsync(forward);
         }*/
         if (tagOfInterest.id == LEFT) {
-            R.drive.update();
             R.drive.turn(Math.toRadians(90));
+            //R.drive.update();
             R.drive.followTrajectory(forwardLEFTT);
+            R.drive.followTrajectory(vBokLeft);
         }
         else if (tagOfInterest.id == RIGHT) {
-            R.drive.update();
             R.drive.turn(Math.toRadians(-90));
+            //R.drive.update();
             R.drive.followTrajectory(forwardRIGHTT);
         }
 

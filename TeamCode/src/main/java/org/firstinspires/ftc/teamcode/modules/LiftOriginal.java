@@ -290,7 +290,7 @@ public class LiftOriginal {
         motor1.setPower(-kP * error);
         motor2.setPower(-kP * error);*/
 
-        while (motor1.getCurrentPosition() < 3800){
+        while (motor1.getCurrentPosition() < 4200){
             motor1.setPower(1);
             motor2.setPower(1);
         }
