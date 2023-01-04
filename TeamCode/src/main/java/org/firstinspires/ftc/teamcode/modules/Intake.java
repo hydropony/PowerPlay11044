@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -17,7 +18,7 @@ public class Intake {
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
     private Gamepad gamepad1;
-    //public DigitalChannel digitalTouch;
+    public AnalogInput digitalTouch;
 
     private CRServo servo1;
     private CRServo servo2;
@@ -26,13 +27,13 @@ public class Intake {
         this.linearOpMode = linearOpMode;
         hardwareMap = linearOpMode.hardwareMap;
         telemetry = linearOpMode.telemetry;
-        gamepad1 = linearOpMode.gamepad1;
+        gamepad1 = linearOpMode.gamepad2;
 
-        servo1 = hardwareMap.get(CRServo.class, HardwareConfig.INTAKE_SERVO_1);
-        servo2 = hardwareMap.get(CRServo.class, HardwareConfig.INTAKE_SERVO_2);
+        servo1 = hardwareMap.get(CRServo.class, "intakeservo1"/*HardwareConfig.INTAKE_SERVO_1*/);
+        servo2 = hardwareMap.get(CRServo.class, "intakeservo2"/*HardwareConfig.INTAKE_SERVO_2*/);
 
-        /*digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
-        digitalTouch.setMode(DigitalChannel.Mode.INPUT);*/
+        digitalTouch = hardwareMap.get(AnalogInput.class, "sensor_analog");
+        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
         servo1.setDirection(DcMotorSimple.Direction.FORWARD);
         servo2.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -41,11 +42,14 @@ public class Intake {
     }
 
     public void teleop() {
-        if(gamepad1.a /*&& digitalTouch.getState() == true*/) {
+        if (digitalTouch.getVoltage() > 1){
+            telemetry.addData("", "Pressed");
+        }
+        if(gamepad1.right_stick_y > 0 ) {
             servo1.setPower(1);
             servo2.setPower(-1);
         }
-        else if(gamepad1.b) {
+        else if(gamepad1.right_stick_y < 0 && digitalTouch.getVoltage() < 1) {
             servo1.setPower(-1);
             servo2.setPower(1);
         }

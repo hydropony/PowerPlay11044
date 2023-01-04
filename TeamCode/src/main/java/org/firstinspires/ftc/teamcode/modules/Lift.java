@@ -32,13 +32,17 @@ public class Lift {
     private double kP = 0.01;
     private double error;
     private double intakePos = 0;
-    private double lowPos = -2000;
-    private double middlePos = -2900;
+    private double lowPos = -710;
+    private double middlePos = -1300;
     private double nwZero = 0;
-    private double highPos = -4300;
+    private double highPos = -1650;
     private double groundPos = -300;
     private DcMotorEx motor1, motor2;
     private boolean candonwz = false;
+    private int LLPT = 1;
+    private int LiftPosOnG = -1;
+    private double tempPowMot = 0;
+    private double takeKon = 120;
 
     public enum State {
         BYPASS,
@@ -49,6 +53,7 @@ public class Lift {
         HIGH,
         NWZERO,
         CANDON,
+        POSITION,
     }
     public State state = State.BYPASS;
 
@@ -56,7 +61,7 @@ public class Lift {
         this.linearOpMode = linearOpMode;
         hardwareMap = linearOpMode.hardwareMap;
         telemetry = linearOpMode.telemetry;
-        gamepad1 = linearOpMode.gamepad1;
+        gamepad1 = linearOpMode.gamepad2;
 
 
         motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
@@ -82,6 +87,148 @@ public class Lift {
             return -1;
         else
             return 0;
+    }
+
+    public void updateWithst(){
+        if (gamepad1.right_stick_x > 0.7 && candonwz){
+            ++LLPT;
+            //sleep(100);
+            if (LLPT > 4) LLPT = -1;
+        }
+        else if (gamepad1.right_stick_x < -0.7 && candonwz){
+            --LLPT;
+            if (LLPT < -1) LLPT = 4;
+        }
+        else if (gamepad1.y) {
+            LiftPosOnG = -1;
+        }
+        else if (LiftPosOnG != -1) {
+            double needHight = nwZero;
+
+            if (LiftPosOnG == 1) needHight += takeKon;
+            else if (LiftPosOnG == 2) needHight -= lowPos;
+            else if (LiftPosOnG == 3) needHight -= middlePos;
+            else if (LiftPosOnG == 4) needHight -= highPos;
+            if (motor1.getCurrentPosition() < needHight - 40) tempPowMot = 1;
+            else if (motor1.getCurrentPosition() > needHight + 40) tempPowMot = -1;
+            else {
+                LiftPosOnG = -1;
+                tempPowMot = 0;
+            }
+            state = State.POSITION;
+        }
+        telemetry.addData("", "LiftPose: " + LiftPosOnG);
+        telemetry.addData("", "LLPT: " + LLPT);
+        if (gamepad1.dpad_down){
+            state = State.NWZERO;
+        }
+        else if (gamepad1.dpad_up){
+            LiftPosOnG = 4;
+            state = State.POSITION;
+            //state = State.HIGH;
+        }
+        else if (gamepad1.b){
+            DoZeroLift_DigitalSensor();
+        }
+        else if (gamepad1.dpad_left){
+            LiftPosOnG = 2;
+            state = State.POSITION;
+            //state = State.LOW;
+        }
+        else if (gamepad1.dpad_right){
+            LiftPosOnG = 3;
+            state = State.POSITION;
+            //state = State.MIDDLE;
+        }
+        else if(gamepad1.right_bumper){
+            state = State.BYPASS;
+        }
+        else if(gamepad1.left_bumper){
+            state = State.GROUND;
+        }
+        else if(gamepad1.x){
+            state = State.CANDON;
+        }
+        else if (gamepad1.a){
+            LiftPosOnG = LLPT;
+        }
+        else{
+            state = State.BYPASS;
+        }
+
+        switch (state) {
+            case BYPASS:
+                if (gamepad1.left_stick_y != 0){
+                    LiftPosOnG = -1;
+                    if(gamepad1.left_stick_y > 0 && motor1.getCurrentPosition() < nwZero){
+                        LiftPosOnG = -1;
+                        motor1.setPower(0);
+                        motor2.setPower(0);
+                    }
+                    else {
+                        motor1.setPower(-gamepad1.left_stick_y);
+                        motor2.setPower(-gamepad1.left_stick_y);
+                    }
+                }
+                else if (LiftPosOnG != -1){
+                    motor1.setPower(tempPowMot);
+                    motor2.setPower(tempPowMot);
+                }
+                else {
+                    motor1.setPower(0);
+                    motor2.setPower(0);
+                }
+
+                if (Math.abs(gamepad1.left_stick_x) > 0.7 && candonwz) {
+                    motor1.setPower(znakdbl(gamepad1.left_stick_x) * 0.25);
+                    motor2.setPower(znakdbl(gamepad1.left_stick_x) * 0.25);
+                }
+                break;
+            case POSITION:
+
+                break;
+            case INTAKE:
+                error = intakePos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case NWZERO:
+                nwZero = motor1.getCurrentPosition();
+                break;
+            case CANDON:
+                if (candonwz)
+                    candonwz = false;
+                else
+                    candonwz = true;
+                break;
+            case GROUND:
+                error = groundPos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case LOW:
+                error = lowPos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case MIDDLE:
+                error = middlePos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+            case HIGH:
+                error = highPos - motor1.getCurrentPosition();
+                motor1.setPower(kP * error);
+                motor2.setPower(kP * error);
+                break;
+        }
+        telemetry.addData("gamepad", gamepad1.left_stick_y);
+        telemetry.addData("error", error);
+        telemetry.addData("lift",motor1.getCurrentPosition());
+        telemetry.addData("state", state);
+        telemetry.update();
+
+
     }
 
     public void update(){
@@ -178,7 +325,7 @@ public class Lift {
         telemetry.addData("error", error);
         telemetry.addData("lift",motor1.getCurrentPosition());
         telemetry.addData("state", state);
-        telemetry.update();
+        //telemetry.update();
 
 
     }
