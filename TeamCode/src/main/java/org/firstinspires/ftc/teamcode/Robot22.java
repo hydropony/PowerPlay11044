@@ -9,14 +9,16 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.modules.Intake;
+import org.firstinspires.ftc.teamcode.modules.IntakeOriginal;
 import org.firstinspires.ftc.teamcode.modules.Lift;
+import org.firstinspires.ftc.teamcode.modules.LiftOriginal;
 import org.firstinspires.ftc.teamcode.modules.Virtual4bar;
 
 public class Robot22 extends Robot {
-    public DigitalChannel digitalTouch;
+    //public DigitalChannel digitalTouch;
     public SampleMecanumDrive drive;
-    public Lift lift;
-    public Intake intake;
+    public LiftOriginal lift;
+    public IntakeOriginal intake;
     public double k = 0.5;
     CRServo servo3;
     CRServo servo2;
@@ -25,11 +27,11 @@ public class Robot22 extends Robot {
     public Robot22(LinearOpMode opMode) {
         super(opMode);
         drive = new SampleMecanumDrive(hardwareMap);
-        lift = new Lift(opMode);
-        intake = new Intake(opMode);
+        lift = new LiftOriginal(opMode);
+        intake = new IntakeOriginal(opMode);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
-        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        /*digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);*/
 
 
         telemetry.addData("Init ready!", "");
@@ -47,7 +49,7 @@ public class Robot22 extends Robot {
             lift.DoZeroLift_DigitalSensor();
         }
 
-        if(gamepad2.right_stick_y > 0) {
+        /*if(gamepad2.right_stick_y > 0 && !digitalTouch.getState()) {
             servo3.setPower(1);
             servo2.setPower(-1);
         }
@@ -55,7 +57,7 @@ public class Robot22 extends Robot {
             servo3.setPower(-1);
             servo2.setPower(1);
         }
-        else if(digitalTouch.getState() == true){
+        /*if(digitalTouch.getState()){
             if(gamepad2.right_stick_y > 0) {
                 servo3.setPower(0);
                 servo2.setPower(0);
@@ -72,7 +74,7 @@ public class Robot22 extends Robot {
         else {
             servo3.setPower(0);
             servo2.setPower(0);
-        }
+        }*/
         if(gamepad1.dpad_up){
             drive.setWeightedDrivePower(
                     new Pose2d(
@@ -149,6 +151,6 @@ public class Robot22 extends Robot {
        telemetry.addData("heading", heading);
         lift.update();
         drive.update();
-        //intake.teleop();
+        intake.teleop();
     }
 }
