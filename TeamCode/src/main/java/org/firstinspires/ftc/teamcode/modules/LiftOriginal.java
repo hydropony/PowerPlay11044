@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.modules;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.AnalogInput;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -18,7 +19,9 @@ public class LiftOriginal {
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
     private Gamepad gamepad2;
+    private AnalogInput conz;
     private DigitalChannel digitalTouch;
+    public ServoAuto servo;
 
     /*
  digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
@@ -47,13 +50,16 @@ public class LiftOriginal {
         NWZERO,
         CANDON,
     }
+
     public State state = State.BYPASS;
 
     public LiftOriginal(LinearOpMode linearOpMode) {
         this.linearOpMode = linearOpMode;
+        servo = new ServoAuto(linearOpMode);
         hardwareMap = linearOpMode.hardwareMap;
         telemetry = linearOpMode.telemetry;
         gamepad2 = linearOpMode.gamepad2;
+        conz = hardwareMap.get(AnalogInput.class, "sensor_analog");
 
 
         motor1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
@@ -72,7 +78,7 @@ public class LiftOriginal {
         telemetry.addData("", "Lift initialized!");
     }
 
-    private int znakdbl( double a){
+    private int znakdbl(double a) {
         if (a > 0)
             return 1;
         else if (a < 0)
@@ -81,40 +87,32 @@ public class LiftOriginal {
             return 0;
     }
 
-    public void update(){
+    public void update() {
 
-        if (gamepad2.dpad_down){
+        if (gamepad2.dpad_down) {
             state = State.NWZERO;
-        }
-        else if (gamepad2.dpad_up){
+        } else if (gamepad2.dpad_up) {
             state = State.HIGH;
-        }
-        else if (gamepad2.dpad_left){
+        } else if (gamepad2.dpad_left) {
             state = State.LOW;
-        }
-        else if (gamepad2.dpad_right){
+        } else if (gamepad2.dpad_right) {
             state = State.MIDDLE;
-        }
-        else if(gamepad2.right_bumper){
+        } else if (gamepad2.right_bumper) {
             state = State.BYPASS;
-        }
-        else if(gamepad2.left_bumper){
+        } else if (gamepad2.left_bumper) {
             state = State.GROUND;
-        }
-        else if(gamepad2.x){
+        } else if (gamepad2.x) {
             state = State.CANDON;
-        }
-        else{
+        } else {
             state = State.BYPASS;
         }
 
         switch (state) {
             case BYPASS:
-                if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > nwZero){
+                if (gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > nwZero) {
                     motor1.setPower(0);
                     motor2.setPower(0);
-                }
-                else{
+                } else {
                     motor1.setPower(gamepad2.left_stick_y);
                     motor2.setPower(gamepad2.left_stick_y);
                 }
@@ -160,23 +158,23 @@ public class LiftOriginal {
         }
         telemetry.addData("gamepad", gamepad2.left_stick_y);
         telemetry.addData("error", error);
-        telemetry.addData("lift",motor1.getCurrentPosition());
+        telemetry.addData("lift", motor1.getCurrentPosition());
         telemetry.addData("state", state);
         telemetry.update();
 
 
     }
 
-    public void DoZeroLift_DigitalSensor(){
-        if (!(digitalTouch.getState())){
-            while (!(digitalTouch.getState())){
+    public void DoZeroLift_DigitalSensor() {
+        if (!(digitalTouch.getState())) {
+            while (!(digitalTouch.getState())) {
                 motor1.setPower(-1);
                 motor2.setPower(-1);
             }
             motor1.setPower(0);
             motor2.setPower(0);
         }
-        while ((digitalTouch.getState())){
+        while ((digitalTouch.getState())) {
             motor1.setPower(0.25);
             motor2.setPower(0.25);
         }
@@ -186,17 +184,16 @@ public class LiftOriginal {
     }
 
 
-    public void updateavto(){
+    public void updateavto() {
         /*error = lowPos - motor1.getCurrentPosition();
         motor1.setPower(kP * error);
         motor2.setPower(kP * error);*/
         switch (state) {
             case BYPASS:
-                if(gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > nwZero){
+                if (gamepad2.left_stick_y >= 0 && motor1.getCurrentPosition() > nwZero) {
                     motor1.setPower(0);
                     motor2.setPower(0);
-                }
-                else{
+                } else {
                     motor1.setPower(gamepad2.left_stick_y);
                     motor2.setPower(gamepad2.left_stick_y);
                 }
@@ -217,7 +214,7 @@ public class LiftOriginal {
                 motor2.setPower(kP * error);
                 break;
             case MIDDLE:
-                while (motor1.getCurrentPosition() > middlePos){
+                while (motor1.getCurrentPosition() > middlePos) {
                     motor1.setPower(-1);
                     motor2.setPower(-1);
                 }
@@ -238,7 +235,7 @@ public class LiftOriginal {
         }
         telemetry.addData("gamepad", gamepad2.left_stick_y);
         telemetry.addData("error", error);
-        telemetry.addData("lift",motor1.getCurrentPosition());
+        telemetry.addData("lift", motor1.getCurrentPosition());
         telemetry.addData("state", state);
         telemetry.update();
 
@@ -264,7 +261,7 @@ public class LiftOriginal {
                motor2.setPower(gamepad2.left_stick_y + kF);
         }*/
 
-        telemetry.addData("lift",motor1.getCurrentPosition());
+        telemetry.addData("lift", motor1.getCurrentPosition());
         telemetry.update();
       /*  if(gamepad2.a) {
             while (gamepad2.a) {
@@ -285,17 +282,16 @@ public class LiftOriginal {
             servo2.setPower(0);
         }*/
     }
+
     public void Pos0() {
-        /*error = 6000 - motor1.getCurrentPosition();
+       /* error = 1600 - motor1.getCurrentPosition();
         motor1.setPower(-kP * error);
         motor2.setPower(-kP * error);*/
 
-        while (motor1.getCurrentPosition() < 4200){
+        while (motor1.getCurrentPosition() < 1455) {
             motor1.setPower(1);
             motor2.setPower(1);
         }
-        motor1.setPower(0);
-        motor2.setPower(0);
         /*ElapsedTime t = new ElapsedTime();
         while (t.milliseconds() < 4000) {
             motor1.setPower(1);
@@ -304,11 +300,12 @@ public class LiftOriginal {
         motor1.setPower(0);
         motor2.setPower(0);*/
     }
+
     public void Pos1() {
         /*error = 6000 - motor1.getCurrentPosition();
         motor1.setPower(kP * error);
         motor2.setPower(kP * error);*/
-        while (motor1.getCurrentPosition() > 0){
+        while (motor1.getCurrentPosition() > 0) {
             motor1.setPower(-1);
             motor2.setPower(-1);
         }
@@ -323,32 +320,42 @@ public class LiftOriginal {
         motor1.setPower(0);
         motor2.setPower(0);*/
     }
-    public void Pos2(){
-        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        if(gamepad2.dpad_right) {
-            while (motor1.getCurrentPosition() < 2000) {
-                motor1.setPower(1);
-                motor2.setPower(-1);
-            }
-            motor1.setPower(0);
-            motor2.setPower(0);
+    public void Pos2() {
+        while (motor1.getCurrentPosition() > 320) {
+            motor1.setPower(-1);
+            motor2.setPower(-1);
         }
+        motor1.setPower(0);
+        motor2.setPower(0);
     }
+
     // Pos 3 is correct variant
-    public void Pos3(){
-        motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-        if(gamepad2.dpad_up) {
-            while (motor1.getCurrentPosition() < 2500) {
-                motor1.setPower(1);
-                motor2.setPower(-1);
-            }
-            motor1.setPower(0);
-            motor2.setPower(0);
+   public void Pos3() {
+        while (motor1.getCurrentPosition() > 600) {
+            motor1.setPower(-1);
+            motor2.setPower(-1);
         }
+        motor1.setPower(0);
+        motor2.setPower(0);
+    }
+    public void Pos4() {
+        /*error = 6000 - motor1.getCurrentPosition();
+        motor1.setPower(-kP * error);
+        motor2.setPower(-kP * error);*/
 
+        while (motor1.getCurrentPosition() < 1200) {
+            motor1.setPower(1);
+            motor2.setPower(1);
+        }
+        motor1.setPower(0);
+        motor2.setPower(0);
+        /*ElapsedTime t = new ElapsedTime();
+        while (t.milliseconds() < 4000) {
+            motor1.setPower(1);
+            motor2.setPower(1);
+        }
+        motor1.setPower(0);
+        motor2.setPower(0);*/
     }
 }
