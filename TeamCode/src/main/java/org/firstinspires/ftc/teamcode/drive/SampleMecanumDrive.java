@@ -148,7 +148,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
         // TODO: reverse any motors using DcMotor.setDirection()
 
-        leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
         leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
 
         rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
@@ -285,7 +285,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        for (DcMotorEx motor : motors) {
 //            wheelPositions.add(encoderTicksToInches(motor.getCurrentPosition()));
 //        }
-        wheelPositions.add(encoderTicksToInches(-leftFront.getCurrentPosition()));
+        wheelPositions.add(encoderTicksToInches(leftFront.getCurrentPosition()));
         wheelPositions.add(encoderTicksToInches(leftRear.getCurrentPosition()));
         wheelPositions.add(encoderTicksToInches(rightRear.getCurrentPosition()));
         wheelPositions.add(encoderTicksToInches(rightFront.getCurrentPosition()));
@@ -298,7 +298,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        for (DcMotorEx motor : motors) {
 //            wheelVelocities.add(encoderTicksToInches(motor.getVelocity()));
 //        }
-        wheelVelocities.add(encoderTicksToInches(-leftFront.getVelocity()));
+        wheelVelocities.add(encoderTicksToInches(leftFront.getVelocity()));
         wheelVelocities.add(encoderTicksToInches(leftRear.getVelocity()));
         wheelVelocities.add(encoderTicksToInches(rightRear.getVelocity()));
         wheelVelocities.add(encoderTicksToInches(rightFront.getVelocity()));
@@ -307,7 +307,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
-        leftFront.setPower(-v);
+        leftFront.setPower(v);
         leftRear.setPower(v1);
         rightRear.setPower(v2);
         rightFront.setPower(v3);

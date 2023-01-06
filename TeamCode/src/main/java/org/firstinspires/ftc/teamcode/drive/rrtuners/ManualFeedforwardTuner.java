@@ -63,10 +63,10 @@ public class ManualFeedforwardTuner extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        if (RUN_USING_ENCODER) {
+       /* if (RUN_USING_ENCODER) {
             RobotLog.setGlobalErrorMsg("Feedforward constants usually don't need to be tuned " +
                     "when using the built-in drive motor velocity PID.");
-        }
+        }*/
 
         telemetry = new MultipleTelemetry(telemetry, dashboard.getTelemetry());
 
