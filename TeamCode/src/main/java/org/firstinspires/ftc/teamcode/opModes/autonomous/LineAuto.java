@@ -35,15 +35,15 @@ public class LineAuto extends LinearOpMode {
     double cx = 402.145;
     double cy = 221.506;
     public static double run = 50;
-    public static double runHigh = 11;
-    public static double runHighBack = -2;
+    public static double runHigh = 11.2;
+    public static double runHighBack = -2.5;
     public static double SteakRun = 29;
-    public static double FromSteakRun = -10;
-    public static double MiddleRun = 5.5;
-    public static double fromMiddleRun = -2;
-    public static double SecondPosition = 10;
-    public static double FirstPosition = 30;
-    public static double ThirdPosition = -20;
+    public static double FromSteakRun = -9;
+    public static double MiddleRun = -2.5;
+    public static double fromMiddleRun = 8.2;
+    public static double SecondPosition = -4;
+    public static double FirstPosition = -28;
+    public static double ThirdPosition = 20;
 
     // UNITS ARE METERS
     double tagsize = 0.166;
@@ -66,10 +66,10 @@ public class LineAuto extends LinearOpMode {
         /*Trajectory runSecondPosition3 = R.drive.trajectoryBuilder(new Pose2d(12,0))
                 .forward(-ParkSecond)
                 .build();*/
-        Trajectory runToHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-48))))
+        Trajectory runToHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-47))))
                 .forward(runHigh)
                 .build();
-        Trajectory runFromHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-48))))
+        Trajectory runFromHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-47))))
                 .forward(runHighBack)
                 .build();
         Trajectory RunToSteak = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(90))))
@@ -81,19 +81,19 @@ public class LineAuto extends LinearOpMode {
         Trajectory RunFromSteak = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(90))))
                 .forward(FromSteakRun)
                 .build();
-        Trajectory RunToMiddle = R.drive.trajectoryBuilder(RunFromSteak.end().plus(new Pose2d(0,0,Math.toRadians(90))))
+        Trajectory RunToMiddle = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-42))))
                 .forward(MiddleRun)
                 .build();
-        Trajectory RunFromMiddle = R.drive.trajectoryBuilder(RunFromSteak.end().plus(new Pose2d(0,0,Math.toRadians(90))))
+        Trajectory RunFromMiddle = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-42))))
                 .forward(fromMiddleRun)
                 .build();
-        Trajectory RunSecondPosition = R.drive.trajectoryBuilder(RunFromSteak.end().plus(new Pose2d(0,0,Math.toRadians(0))))
+        Trajectory RunSecondPosition = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
                 .forward(SecondPosition)
                 .build();
-        Trajectory RunFirstPosition = R.drive.trajectoryBuilder(RunFromSteak.end().plus(new Pose2d(0,0,Math.toRadians(0))))
+        Trajectory RunFirstPosition = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
                 .forward(FirstPosition)
                 .build();
-        Trajectory RunThirdPosition = R.drive.trajectoryBuilder(RunFromSteak.end().plus(new Pose2d(0,0,Math.toRadians(0))))
+        Trajectory RunThirdPosition = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
                 .forward(ThirdPosition)
                 .build();
 
@@ -181,24 +181,28 @@ public class LineAuto extends LinearOpMode {
         //R.drive.followTrajectory(forward);
         // R.lift.state = Lift.State.MIDDLE;
         R.drive.followTrajectory(forward);
-        R.drive.turn(Math.toRadians(-48));
+        R.drive.turn(Math.toRadians(-47));
         R.lift.Pos0();
         R.drive.followTrajectory(runToHigh);
+        R.lift.Pos0();
         servoClass.run();
         R.drive.followTrajectory(runFromHigh);
         R.lift.Pos2();
-        R.drive.turn(Math.toRadians(136));
+        R.drive.turn(Math.toRadians(137));
         R.drive.followTrajectory(RunToSteak);
         R.lift.Pos3();
         servoClass.just_run();
         R.lift.Pos4();
         R.drive.followTrajectory(RunFromSteak);
-        R.drive.turn(Math.toRadians(90));
-        R.lift.Pos4();
+        R.drive.turn(Math.toRadians(-130));
         R.drive.followTrajectory(RunToMiddle);
-        servoClass.run();
+        R.lift.Pos4();
         R.drive.followTrajectory(RunFromMiddle);
-        R.drive.turn(Math.toRadians(-90));
+        R.lift.Pos4();
+        servoClass.run();
+        R.drive.followTrajectory(RunToMiddle);
+        R.lift.Pos1();
+        R.drive.turn(Math.toRadians(-50));
         R.drive.followTrajectory(RunSecondPosition);
 
         if (tagOfInterest.id == LEFT) {
