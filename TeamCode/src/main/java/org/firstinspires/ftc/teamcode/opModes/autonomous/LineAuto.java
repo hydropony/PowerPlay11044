@@ -10,6 +10,7 @@ import com.acmerobotics.roadrunner.trajectory.Trajectory;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
+import org.firstinspires.ftc.teamcode.OneOperatorRobot2022;
 import org.firstinspires.ftc.teamcode.Robot22;
 import org.firstinspires.ftc.teamcode.Vision.AprilTagDetectionPipeline;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
@@ -26,7 +27,7 @@ import java.util.ArrayList;
 @com.qualcomm.robotcore.eventloop.opmode.Autonomous
 
 public class LineAuto extends LinearOpMode {
-    Robot22 R;
+   OneOperatorRobot2022 R;
 
     OpenCvCamera camera;
     AprilTagDetectionPipeline aprilTagDetectionPipeline;
@@ -34,16 +35,17 @@ public class LineAuto extends LinearOpMode {
     double fy = 578.272;
     double cx = 402.145;
     double cy = 221.506;
-    public static double run = 50;
-    public static double runHigh = 11.2;
-    public static double runHighBack = -2.5;
-    public static double SteakRun = 29;
-    public static double FromSteakRun = -9;
-    public static double MiddleRun = -2.5;
-    public static double fromMiddleRun = 8.2;
-    public static double SecondPosition = -4;
-    public static double FirstPosition = -28;
-    public static double ThirdPosition = 20;
+    public static double run = 49.5;
+    public static double runHigh = 9.8;
+    public static double runHighBack = -2.2;
+    public static double SteakRun = 29.1;
+    public static double FromSteakRun = -52;
+    public static double MiddleRun = 2.3;
+    public static double fromMiddleRun = 0.1 ;
+    public static double FromCentralHighRun = -2;
+    public static double SecondPosition = 0.5;
+    public static double FirstPosition = 2;
+    public static double ThirdPosition = 0.001;
 
     // UNITS ARE METERS
     double tagsize = 0.166;
@@ -57,7 +59,7 @@ public class LineAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         telemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
-        R = new Robot22(this);
+        R = new OneOperatorRobot2022(this);
         SampleMecanumDrive drive = new SampleMecanumDrive(hardwareMap);
         ServoAuto servoClass = new ServoAuto(this);
         Trajectory forward = R.drive.trajectoryBuilder(new Pose2d(0,0))
@@ -66,10 +68,10 @@ public class LineAuto extends LinearOpMode {
         /*Trajectory runSecondPosition3 = R.drive.trajectoryBuilder(new Pose2d(12,0))
                 .forward(-ParkSecond)
                 .build();*/
-        Trajectory runToHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-47))))
+        Trajectory runToHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-48))))
                 .forward(runHigh)
                 .build();
-        Trajectory runFromHigh = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-47))))
+        Trajectory runFromHigh = R.drive.trajectoryBuilder(runToHigh.end().plus(new Pose2d(0,0,Math.toRadians(0))))
                 .forward(runHighBack)
                 .build();
         Trajectory RunToSteak = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(90))))
@@ -78,16 +80,28 @@ public class LineAuto extends LinearOpMode {
        /* Trajectory forwardRIGHT = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
                 .forward(right)
                 .build();*/
-        Trajectory RunFromSteak = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(90))))
+        Trajectory RunFromSteak = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(-14,0,Math.toRadians(90))))
                 .forward(FromSteakRun)
                 .build();
-        Trajectory RunToMiddle = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-42))))
+        Trajectory RunToMiddle = R.drive.trajectoryBuilder(RunFromSteak.end().plus(new Pose2d(0,9,Math.toRadians(15))))
                 .forward(MiddleRun)
                 .build();
-        Trajectory RunFromMiddle = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-42))))
-                .forward(fromMiddleRun)
+        Trajectory FromCentrRun = R.drive.trajectoryBuilder(RunFromSteak.end().plus(new Pose2d(0,0,Math.toRadians(0))))
+                .forward(FromCentralHighRun)
                 .build();
-        Trajectory RunSecondPosition = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
+        Trajectory RunThirdPosition1 = R.drive.trajectoryBuilder(RunFromSteak.end().plus(new Pose2d(15,0,Math.toRadians(0))))
+                .forward(ThirdPosition)
+                .build();
+        Trajectory RunThirdPosition2 = R.drive.trajectoryBuilder(RunToSteak.end().plus(new Pose2d(0,0,Math.toRadians(0))))
+                .forward(ThirdPosition)
+                .build();
+        Trajectory RunSecondPosition = R.drive.trajectoryBuilder(RunToSteak.end().plus(new Pose2d(0,0,Math.toRadians(0))))
+                .forward(SecondPosition)
+                .build();
+        Trajectory RunFirstPosition = R.drive.trajectoryBuilder(RunToSteak.end().plus(new Pose2d(0,0,Math.toRadians(0))))
+                .forward(FirstPosition)
+                .build();
+        /*Trajectory RunSecondPosition = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
                 .forward(SecondPosition)
                 .build();
         Trajectory RunFirstPosition = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
@@ -95,7 +109,7 @@ public class LineAuto extends LinearOpMode {
                 .build();
         Trajectory RunThirdPosition = R.drive.trajectoryBuilder(forward.end().plus(new Pose2d(0,0,Math.toRadians(-90))))
                 .forward(ThirdPosition)
-                .build();
+                .build();*/
 
         int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
         camera = OpenCvCameraFactory.getInstance().createWebcam(hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId);
@@ -180,36 +194,50 @@ public class LineAuto extends LinearOpMode {
 
         //R.drive.followTrajectory(forward);
         // R.lift.state = Lift.State.MIDDLE;
+        R.lift.AutoMotorSetP(0.9);
         R.drive.followTrajectory(forward);
-        R.drive.turn(Math.toRadians(-47));
-        R.lift.Pos0();
+        sleep(700);
+        R.drive.turn(Math.toRadians(-46));
         R.drive.followTrajectory(runToHigh);
-        R.lift.Pos0();
+        //R.lift.Pos0();
         servoClass.run();
         R.drive.followTrajectory(runFromHigh);
-        R.lift.Pos2();
+        R.lift.PositionTeleop1(230, 1);
+        //R.lift.Pos2();
         R.drive.turn(Math.toRadians(137));
         R.drive.followTrajectory(RunToSteak);
-        R.lift.Pos3();
+        //R.lift.Pos3();
+        R.lift.AutoMotorSetP(-0.05);
         servoClass.just_run();
-        R.lift.Pos4();
+        R.lift.AutoMotorSetP(0.9);
+        sleep(600);
         R.drive.followTrajectory(RunFromSteak);
-        R.drive.turn(Math.toRadians(-130));
+       // R.drive.turn(Math.toRadians(40));
+
         R.drive.followTrajectory(RunToMiddle);
-        R.lift.Pos4();
-        R.drive.followTrajectory(RunFromMiddle);
-        R.lift.Pos4();
+
+        //R.lift.Pos4();
+        //R.drive.followTrajectory(RunFromMiddle);
+        //R.lift.Pos4();
+        sleep(700);
         servoClass.run();
-        R.drive.followTrajectory(RunToMiddle);
-        R.lift.Pos1();
-        R.drive.turn(Math.toRadians(-50));
+        R.drive.followTrajectory(FromCentrRun);
+        R.drive.followTrajectory(RunThirdPosition1);
+        R.lift.PositionTeleop1(270, 1);
+        R.drive.followTrajectory(RunThirdPosition2);
+       // R.drive.followTrajectory(RunFirstPosition);
+        //R.lift.PositionTeleop1(270, 1);
+       // R.drive.followTrajectory(RunSecondPosition);
+        /*R.drive.followTrajectory(RunToMiddle);
+
+        R.drive.turn(Math.toRadians(-50));*/
         R.drive.followTrajectory(RunSecondPosition);
 
         if (tagOfInterest.id == LEFT) {
-            R.drive.followTrajectory(RunFirstPosition);
+           // R.drive.followTrajectory(RunFirstPosition);
         }
         else if (tagOfInterest.id == RIGHT) {
-            R.drive.followTrajectory(RunThirdPosition);
+
         }
 
 
