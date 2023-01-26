@@ -37,6 +37,8 @@ public class OneOperatorRobot2022 extends Robot {
         telemetry.update();
     }
 
+
+
     public void control() {
         servo2 = hardwareMap.get(CRServo.class, "servo2");
         servo3 = hardwareMap.get(CRServo.class, "servo3");
