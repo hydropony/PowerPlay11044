@@ -365,6 +365,7 @@ public class Lift {
 
     }
 
+
     public void DoZeroLift_DigitalSensor(){
         if ((digitalTouch.getState())){
             while ((digitalTouch.getState()) && gamepad1.left_stick_y == 0){
