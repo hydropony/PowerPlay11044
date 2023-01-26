@@ -284,45 +284,24 @@ public class LiftOriginal {
     }
 
     public void Pos0() {
-       /* error = 1600 - motor1.getCurrentPosition();
-        motor1.setPower(-kP * error);
-        motor2.setPower(-kP * error);*/
 
-        while (motor1.getCurrentPosition() < 1455) {
+        while (motor1.getCurrentPosition() < 1480) {
             motor1.setPower(1);
             motor2.setPower(1);
         }
-        /*ElapsedTime t = new ElapsedTime();
-        while (t.milliseconds() < 4000) {
-            motor1.setPower(1);
-            motor2.setPower(1);
-        }
-        motor1.setPower(0);
-        motor2.setPower(0);*/
     }
 
     public void Pos1() {
-        /*error = 6000 - motor1.getCurrentPosition();
-        motor1.setPower(kP * error);
-        motor2.setPower(kP * error);*/
+
         while (motor1.getCurrentPosition() > 0) {
             motor1.setPower(-1);
             motor2.setPower(-1);
         }
         motor1.setPower(0);
-        motor2.setPower(0);
-
-        /*ElapsedTime t = new ElapsedTime();
-        while (t.milliseconds() < 4000) {
-            motor1.setPower(1);
-            motor2.setPower(1);
-        }
-        motor1.setPower(0);
-        motor2.setPower(0);*/
-    }
+        motor2.setPower(0); }
 
     public void Pos2() {
-        while (motor1.getCurrentPosition() > 320) {
+        while (motor1.getCurrentPosition() > 360) {
             motor1.setPower(-1);
             motor2.setPower(-1);
         }
@@ -330,9 +309,31 @@ public class LiftOriginal {
         motor2.setPower(0);
     }
 
-    // Pos 3 is correct variant
-   public void Pos3() {
-        while (motor1.getCurrentPosition() > 600) {
+    public void AutoMotorSetP(double d){
+        motor1.setPower(d);
+        motor2.setPower(d);
+    }
+
+    public int PositionTeleop1(double posit, int i)
+    {
+        if (i == 1){
+            double y = 0.3;
+            if (motor1.getCurrentPosition() < posit) y = -1;
+            while (motor1.getCurrentPosition() * y > posit * y){
+                AutoMotorSetP( -1 * y);}
+            AutoMotorSetP(0.1);
+            return 0;
+        }
+        int tempPowM1 = 0;
+        if (motor1.getCurrentPosition() < posit - 10) tempPowM1 = 1;
+        else if (motor1.getCurrentPosition() > posit + 10) tempPowM1 = -1;
+        motor1.setPower(tempPowM1);
+        motor2.setPower(tempPowM1);
+        return tempPowM1;
+    }
+
+    public void Pos3() {
+        while (motor1.getCurrentPosition() > 240) {
             motor1.setPower(-1);
             motor2.setPower(-1);
         }
@@ -340,22 +341,9 @@ public class LiftOriginal {
         motor2.setPower(0);
     }
     public void Pos4() {
-        /*error = 6000 - motor1.getCurrentPosition();
-        motor1.setPower(-kP * error);
-        motor2.setPower(-kP * error);*/
-
-        while (motor1.getCurrentPosition() < 1200) {
+         while (motor1.getCurrentPosition() < 1500) {
             motor1.setPower(1);
             motor2.setPower(1);
-        }
-        motor1.setPower(0);
-        motor2.setPower(0);
-        /*ElapsedTime t = new ElapsedTime();
-        while (t.milliseconds() < 4000) {
-            motor1.setPower(1);
-            motor2.setPower(1);
-        }
-        motor1.setPower(0);
-        motor2.setPower(0);*/
+         }
     }
 }

@@ -151,8 +151,8 @@ public class SampleMecanumDrive extends MecanumDrive {
         leftFront.setDirection(DcMotorSimple.Direction.FORWARD);
         leftRear.setDirection(DcMotorSimple.Direction.FORWARD);
 
-        rightFront.setDirection(DcMotorSimple.Direction.FORWARD);
-        rightRear.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+        rightRear.setDirection(DcMotorSimple.Direction.FORWARD);
         // TODO: if desired, use setLocalizer() to change the localization method
         // for instance, setLocalizer(new ThreeTrackingWheelLocalizer(...));
 
@@ -287,7 +287,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        }
         wheelPositions.add(encoderTicksToInches(leftFront.getCurrentPosition()));
         wheelPositions.add(encoderTicksToInches(leftRear.getCurrentPosition()));
-        wheelPositions.add(encoderTicksToInches(rightRear.getCurrentPosition()));
+        wheelPositions.add(encoderTicksToInches(-rightRear.getCurrentPosition()));
         wheelPositions.add(encoderTicksToInches(rightFront.getCurrentPosition()));
         return wheelPositions;
     }
@@ -300,7 +300,7 @@ public class SampleMecanumDrive extends MecanumDrive {
 //        }
         wheelVelocities.add(encoderTicksToInches(leftFront.getVelocity()));
         wheelVelocities.add(encoderTicksToInches(leftRear.getVelocity()));
-        wheelVelocities.add(encoderTicksToInches(rightRear.getVelocity()));
+        wheelVelocities.add(encoderTicksToInches(-rightRear.getVelocity()));
         wheelVelocities.add(encoderTicksToInches(rightFront.getVelocity()));
         return wheelVelocities;
     }
@@ -308,8 +308,8 @@ public class SampleMecanumDrive extends MecanumDrive {
     @Override
     public void setMotorPowers(double v, double v1, double v2, double v3) {
         leftFront.setPower(v);
-        leftRear.setPower(v1);
-        rightRear.setPower(v2);
+        leftRear.setPower(-v1);
+        rightRear.setPower(-v2);
         rightFront.setPower(v3);
     }
 

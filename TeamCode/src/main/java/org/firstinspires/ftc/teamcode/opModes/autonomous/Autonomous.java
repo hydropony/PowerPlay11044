@@ -145,6 +145,8 @@ public class Autonomous extends LinearOpMode {
         //R.drive.followTrajectory(forward);
         R.lift.state = Lift.State.MIDDLE;
         R.drive.followTrajectory(forward);
+        R.drive.turn(Math.toRadians(80));
+        R.drive.followTrajectory(forwardLEFT);
         /*while(R.drive.isBusy() && !isStopRequested()){
             R.lift.updateavto();
             //R.drive.followTrajectoryAsync(forward);

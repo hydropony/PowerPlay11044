@@ -196,7 +196,8 @@ public class LineAuto extends LinearOpMode {
         // R.lift.state = Lift.State.MIDDLE;
         R.lift.AutoMotorSetP(0.9);
         R.drive.followTrajectory(forward);
-        sleep(700);
+        //sleep(700);
+        /*R.delay(700);*/
         R.drive.turn(Math.toRadians(-46));
         R.drive.followTrajectory(runToHigh);
         //R.lift.Pos0();
@@ -210,7 +211,8 @@ public class LineAuto extends LinearOpMode {
         R.lift.AutoMotorSetP(-0.05);
         servoClass.just_run();
         R.lift.AutoMotorSetP(0.9);
-        sleep(600);
+       // sleep(600);
+        R.delay(600);
         R.drive.followTrajectory(RunFromSteak);
        // R.drive.turn(Math.toRadians(40));
 
@@ -219,7 +221,8 @@ public class LineAuto extends LinearOpMode {
         //R.lift.Pos4();
         //R.drive.followTrajectory(RunFromMiddle);
         //R.lift.Pos4();
-        sleep(700);
+        //sleep(700);
+        R.delay(700);
         servoClass.run();
         R.drive.followTrajectory(FromCentrRun);
         R.drive.followTrajectory(RunThirdPosition1);
@@ -231,7 +234,7 @@ public class LineAuto extends LinearOpMode {
         /*R.drive.followTrajectory(RunToMiddle);
 
         R.drive.turn(Math.toRadians(-50));*/
-        R.drive.followTrajectory(RunSecondPosition);
+        //R.drive.followTrajectory(RunSecondPosition);
 
         if (tagOfInterest.id == LEFT) {
            // R.drive.followTrajectory(RunFirstPosition);

@@ -15,7 +15,7 @@ import java.util.List;
 @TeleOp
 public class EzTeleop extends LinearOpMode {
     DcMotorEx lf, lb, rf, rb;
-    DcMotorEx stCh, lift1, lift2;
+    //DcMotorEx stCh, lift1, lift2;
     CRServo servo3;
     CRServo servo2;
     double err, konst, konst1;
@@ -26,9 +26,9 @@ public class EzTeleop extends LinearOpMode {
         lb = hardwareMap.get(DcMotorEx.class, "leftRear");
         rb = hardwareMap.get(DcMotorEx.class, "rightRear");
         rf = hardwareMap.get(DcMotorEx.class, "rightFront");
-        stCh = hardwareMap.get(DcMotorEx.class, "StaticChain");
-        lift1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
-        lift2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
+        //stCh = hardwareMap.get(DcMotorEx.class, "StaticChain");
+        //lift1 = hardwareMap.get(DcMotorEx.class, "liftmotor1");
+        //lift2 = hardwareMap.get(DcMotorEx.class, "liftmotor2");
         servo2 = hardwareMap.get(CRServo.class, "servo2");
         servo3 = hardwareMap.get(CRServo.class, "servo3");
 
@@ -36,22 +36,17 @@ public class EzTeleop extends LinearOpMode {
         lb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rf.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         rb.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        stCh.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        lift1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
 
         lf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         lb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rf.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         rb.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        stCh.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift1.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
-        lift2.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-       lift1.setDirection(DcMotorSimple.Direction.REVERSE);
-        lift2.setDirection(DcMotorSimple.Direction.REVERSE);
-        lf.setDirection(DcMotorSimple.Direction.REVERSE); // Mb nado pomenyat na rb i rf, protestit'
-        lb.setDirection(DcMotorSimple.Direction.REVERSE); //Nado chtobi pri podache 1 na vse motori kb robot ehal vpered
+        lf.setDirection(DcMotorSimple.Direction.FORWARD); // Mb nado pomenyat na rb i rf, protestit'
+        lb.setDirection(DcMotorSimple.Direction.FORWARD);
+        rf.setDirection(DcMotorSimple.Direction.FORWARD); // Mb nado pomenyat na rb i rf, protestit'
+        rb.setDirection(DcMotorSimple.Direction.REVERSE);//Nado chtobi pri podache 1 na vse motori kb robot ehal vpered
 
         waitForStart();
 
@@ -59,7 +54,7 @@ public class EzTeleop extends LinearOpMode {
             //LiftPosition lift = new LiftPosition(this);
             Lift lift = new Lift(this);
             double ref = 50;
-            err = ref - stCh.getCurrentPosition();
+            //err = ref - stCh.getCurrentPosition();
             konst = 0.7;
 
             konst1 = 0.2;
@@ -83,94 +78,25 @@ public class EzTeleop extends LinearOpMode {
                 if (powers[i] > max)
                     max = powers[i];
             }
-            if (max > 1) {
-                lfpower /= max;
-                lbpower /= max;
-                rfpower /= max;
-                rbpower /= max;
-            }
-            lf.setPower(lfpower);
-            lb.setPower(-lbpower);
-            rf.setPower(-rfpower);
-            rb.setPower(-rbpower);
-            telemetry.addData("lf", lf.getCurrentPosition());
-            telemetry.update();
-            if(rotationSlowRight){
-                lf.setPower(0.5);
-                lb.setPower(-0.5);
-                rf.setPower(0.5);
-                rb.setPower(0.5);
-            }
-            if(rotationSlowLeft){
-                lf.setPower(-0.5);
-                lb.setPower(0.5);
-                rf.setPower(-0.5);
-                rb.setPower(-0.5);
-            }
-            if (ySlowDown){
-                lf.setPower(-0.5);
-                lb.setPower(0.5);
-                rf.setPower(0.5);
-                rb.setPower(0.5);
-            }
-            if(ySlowUp){
-                lf.setPower(0.5);
-                lb.setPower(-0.5);
-                rf.setPower(-0.5);
-                rb.setPower(-0.5);
-            }
-            if (xSlowLeft){
-                lf.setPower(-0.5);
-                lb.setPower(-0.5);
-                rf.setPower(-0.5);
-                rb.setPower(0.5);
-            }
-            if (xslowRight){
-                lf.setPower(0.5);
-                lb.setPower(0.5);
-                rf.setPower(0.5);
-                rb.setPower(-0.5);
-            }
-
-            stCh.setPower(gamepad2.right_stick_y);
-
-            if(gamepad2.a) {
-                servo3.setPower(1);
-                servo2.setPower(-1);
-            }
-            if(gamepad2.b) {
-                servo3.setPower(-1);
-                servo2.setPower(1);
-            }
-            if(gamepad1.a) {
-                servo3.setPower(1);
-                servo2.setPower(-1);
-            }
-            if(gamepad1.b) {
-                servo3.setPower(-1);
-                servo2.setPower(1);
-            }
-            else {
-                servo3.setPower(0);
-                servo2.setPower(0);
+            if(gamepad1.dpad_up) {
+                lf.setPower(1);
+                lb.setPower(1);
+                rf.setPower(1);
+                rb.setPower(1);
             }
 
 
-            lift.Pos0();
-            lift.Pos1();
-            lift.Pos3();
-            lift.Pos2();
+            //lift.Pos3();
+            //lift.Pos2();
            // lift.Retention();
-            lift1.setPower(gamepad2.left_stick_y);
-            lift2.setPower(gamepad2.left_stick_y);
-            telemetry.addData("lift",lift1.getCurrentPosition());
+
             telemetry.update();
 
         }
 
 
         if(Math.abs(err) > 30){
-            stCh.setPower(gamepad2.right_stick_y*konst1);
+            //stCh.setPower(gamepad2.right_stick_y*konst1);
         }
 
 

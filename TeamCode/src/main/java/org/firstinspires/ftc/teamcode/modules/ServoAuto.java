@@ -49,12 +49,12 @@ public class ServoAuto{
     }
     public void just_run(){
         ElapsedTime t = new ElapsedTime();
-        while (t.milliseconds() < 1100) {
+        while (t.milliseconds() < 800) {
             servo3.setPower(-1);
             servo2.setPower(1);
         }
-        servo3.setPower(0);
-        servo2.setPower(0);
+        servo3.setPower(-0.1);
+        servo2.setPower(0.1);
         /*while (conz.getVoltage() < 1) {
             servo3.setPower(-1);
             servo2.setPower(1);
@@ -62,6 +62,10 @@ public class ServoAuto{
         servo3.setPower(0);
         servo2.setPower(0);
     }*/
-        }
+    }
+    public void AutoSetPow(double d){
+        servo3.setPower(-d);
+        servo2.setPower(d);
+    }
 
 }

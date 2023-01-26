@@ -41,6 +41,29 @@ public class Intake {
         telemetry.addData("", "Intake initialized!");
     }
 
+
+    public void teleop_v1(double lift_pos, int bb){
+        if (digitalTouch.getVoltage() > 1){
+            telemetry.addData("", "Pressed");
+        }
+        if(gamepad1.right_stick_y > 0 ) {
+            servo1.setPower(1);
+            servo2.setPower(-1);
+        }
+        else if(gamepad1.right_stick_y < 0 && digitalTouch.getVoltage() < 1) {
+            servo1.setPower(-1);
+            servo2.setPower(1);
+        }
+        else if(digitalTouch.getVoltage() < 1 && lift_pos > 300){
+            servo1.setPower(-0.1);
+            servo2.setPower(0.1);
+        }
+        else {
+            servo1.setPower(bb);
+            servo2.setPower(-bb);
+        }
+    }
+
     public void teleop() {
         if (digitalTouch.getVoltage() > 1){
             telemetry.addData("", "Pressed");

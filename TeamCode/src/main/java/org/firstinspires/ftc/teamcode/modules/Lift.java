@@ -18,7 +18,7 @@ public class Lift {
     private Telemetry telemetry;
     private LinearOpMode linearOpMode;
     private Gamepad gamepad1;
-    //private DigitalChannel digitalTouch;
+    private DigitalChannel digitalTouch;
 
     /*
 
@@ -32,8 +32,8 @@ public class Lift {
     private double kP = 0.01;
     private double error;
     private double intakePos = 0;
-    private double lowPos = -710;
-    private double middlePos = -1300;
+    private double lowPos = -560;
+    private double middlePos = -1090;
     private double nwZero = 0;
     private double highPos = -1650;
     private double groundPos = -300;
@@ -43,6 +43,7 @@ public class Lift {
     private int LiftPosOnG = -1;
     private double tempPowMot = 0;
     private double takeKon = 120;
+    public double lifPoseForIntake = 0;
 
     public enum State {
         BYPASS,
@@ -53,7 +54,7 @@ public class Lift {
         HIGH,
         NWZERO,
         CANDON,
-        POSITION,
+        //POSITION,
     }
     public State state = State.BYPASS;
 
@@ -74,10 +75,15 @@ public class Lift {
         motor1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motor2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        //digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
-        //digitalTouch.setMode(DigitalChannel.Mode.INPUT);
+        digitalTouch = hardwareMap.get(DigitalChannel.class, "Gercone_digital");
+        digitalTouch.setMode(DigitalChannel.Mode.INPUT);
 
         telemetry.addData("", "Lift initialized!");
+    }
+
+    public void AutoMotorSetP(double d){
+        motor1.setPower(d);
+        motor2.setPower(d);
     }
 
     private int znakdbl( double a){
@@ -88,21 +94,16 @@ public class Lift {
         else
             return 0;
     }
+    public void easyTele(){
+        motor1.setPower(-gamepad1.left_stick_y);
+        motor2.setPower(-gamepad1.left_stick_y);
+    }
 
     public void updateWithst(){
-        if (gamepad1.right_stick_x > 0.7 && candonwz){
-            ++LLPT;
-            //sleep(100);
-            if (LLPT > 4) LLPT = -1;
-        }
-        else if (gamepad1.right_stick_x < -0.7 && candonwz){
-            --LLPT;
-            if (LLPT < -1) LLPT = 4;
-        }
-        else if (gamepad1.y) {
+        if (gamepad1.y) {
             LiftPosOnG = -1;
         }
-        else if (LiftPosOnG != -1) {
+        else if (LiftPosOnG >= 0) {
             double needHight = nwZero;
 
             if (LiftPosOnG == 1) needHight += takeKon;
@@ -112,10 +113,10 @@ public class Lift {
             if (motor1.getCurrentPosition() < needHight - 40) tempPowMot = 1;
             else if (motor1.getCurrentPosition() > needHight + 40) tempPowMot = -1;
             else {
-                LiftPosOnG = -1;
-                tempPowMot = 0;
+                LiftPosOnG = -2;
+                tempPowMot = 0.2;
             }
-            state = State.POSITION;
+            //state = State.POSITION;
         }
         telemetry.addData("", "LiftPose: " + LiftPosOnG);
         telemetry.addData("", "LLPT: " + LLPT);
@@ -124,7 +125,7 @@ public class Lift {
         }
         else if (gamepad1.dpad_up){
             LiftPosOnG = 4;
-            state = State.POSITION;
+            //state = State.POSITION;
             //state = State.HIGH;
         }
         else if (gamepad1.b){
@@ -132,30 +133,35 @@ public class Lift {
         }
         else if (gamepad1.dpad_left){
             LiftPosOnG = 2;
-            state = State.POSITION;
+            //state = State.POSITION;
             //state = State.LOW;
         }
         else if (gamepad1.dpad_right){
             LiftPosOnG = 3;
-            state = State.POSITION;
+            //state = State.POSITION;
             //state = State.MIDDLE;
         }
-        else if(gamepad1.right_bumper){
-            state = State.BYPASS;
-        }
-        else if(gamepad1.left_bumper){
-            state = State.GROUND;
-        }
-        else if(gamepad1.x){
+        else if(gamepad1.right_trigger > 0.5){
+            //state = State.BYPASS;
+            motor1.setPower(1);
+            motor2.setPower(1);
             state = State.CANDON;
         }
+        else if(gamepad1.left_trigger > 0.5){
+            //state = State.GROUND;
+            motor1.setPower(-1);
+            motor2.setPower(-1);
+            state = State.CANDON;
+        }
+        /*else if(gamepad1.x){
+            state = State.CANDON;
+        }*/
         else if (gamepad1.a){
             LiftPosOnG = LLPT;
         }
         else{
             state = State.BYPASS;
         }
-
         switch (state) {
             case BYPASS:
                 if (gamepad1.left_stick_y != 0){
@@ -179,14 +185,14 @@ public class Lift {
                     motor2.setPower(0);
                 }
 
-                if (Math.abs(gamepad1.left_stick_x) > 0.7 && candonwz) {
+                /*if (Math.abs(gamepad1.left_stick_x) > 0.7 && candonwz) {
                     motor1.setPower(znakdbl(gamepad1.left_stick_x) * 0.25);
                     motor2.setPower(znakdbl(gamepad1.left_stick_x) * 0.25);
-                }
+                }*/
                 break;
-            case POSITION:
+            /*case POSITION:
 
-                break;
+                break;*/
             case INTAKE:
                 error = intakePos - motor1.getCurrentPosition();
                 motor1.setPower(kP * error);
@@ -222,6 +228,7 @@ public class Lift {
                 motor2.setPower(kP * error);
                 break;
         }
+        lifPoseForIntake = motor1.getCurrentPosition();
         telemetry.addData("gamepad", gamepad1.left_stick_y);
         telemetry.addData("error", error);
         telemetry.addData("lift",motor1.getCurrentPosition());
@@ -230,6 +237,34 @@ public class Lift {
 
 
     }
+
+    public void Pos2() {
+        while (motor1.getCurrentPosition() > 200) {
+            motor1.setPower(-0.3);
+            motor2.setPower(-0.3);
+        }
+        motor1.setPower(0.1);
+        motor2.setPower(0.1);
+    }
+
+    public int PositionTeleop1(double posit, int i)
+    {
+        if (i == 1){
+            double y = 0.3;
+            if (motor1.getCurrentPosition() < posit) y = -1;
+            while (motor1.getCurrentPosition() * y > posit * y){
+                AutoMotorSetP( -1 * y);}
+            AutoMotorSetP(0.1);
+            return 0;
+        }
+        int tempPowM1 = 0;
+        if (motor1.getCurrentPosition() < posit - 10) tempPowM1 = 1;
+        else if (motor1.getCurrentPosition() > posit + 10) tempPowM1 = -1;
+        motor1.setPower(tempPowM1);
+        motor2.setPower(tempPowM1);
+        return tempPowM1;
+    }
+
 
     public void update(){
 
@@ -331,18 +366,28 @@ public class Lift {
     }
 
     public void DoZeroLift_DigitalSensor(){
-        /*if (!(digitalTouch.getState())){
-            while (!(digitalTouch.getState())){
-                motor1.setPower(-1);
-                motor2.setPower(-1);
+        if ((digitalTouch.getState())){
+            while ((digitalTouch.getState()) && gamepad1.left_stick_y == 0){
+                motor1.setPower(-0.3);
+                motor2.setPower(-0.3);
+                telemetry.addData("down", -1);
+                telemetry.update();
             }
             motor1.setPower(0);
             motor2.setPower(0);
         }
-        while ((digitalTouch.getState())){
+        ElapsedTime t = new ElapsedTime();
+        while (t.milliseconds() < 300 && gamepad1.left_stick_y == 0){
+            motor1.setPower(-0.05);
+            motor2.setPower(-0.05);
+        }
+        t = new ElapsedTime();
+        while ((digitalTouch.getState() == false) && gamepad1.left_stick_y == 0 && t.milliseconds() < 700){
             motor1.setPower(0.25);
             motor2.setPower(0.25);
-        }*/
+            telemetry.addData("up", 1);
+            telemetry.update();
+        }
         motor1.setPower(0);
         motor2.setPower(0);
         nwZero = motor1.getCurrentPosition();

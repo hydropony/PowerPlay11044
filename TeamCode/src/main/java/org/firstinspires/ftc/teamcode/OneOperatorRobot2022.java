@@ -10,12 +10,13 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.teamcode.drive.SampleMecanumDrive;
 import org.firstinspires.ftc.teamcode.modules.Intake;
 import org.firstinspires.ftc.teamcode.modules.Lift;
+import org.firstinspires.ftc.teamcode.modules.LiftOriginal;
 import org.firstinspires.ftc.teamcode.modules.Virtual4bar;
 
 public class OneOperatorRobot2022 extends Robot {
     //public DigitalChannel digitalTouch;
     public SampleMecanumDrive drive;
-    public Lift lift;
+    public LiftOriginal lift;
     public Intake intake;
     public double k = 0.5;
     CRServo servo3;
@@ -25,7 +26,7 @@ public class OneOperatorRobot2022 extends Robot {
     public OneOperatorRobot2022(LinearOpMode opMode) {
         super(opMode);
         drive = new SampleMecanumDrive(hardwareMap);
-        lift = new Lift(opMode);
+        lift = new LiftOriginal(opMode);
         intake = new Intake(opMode);
         drive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         /*digitalTouch = hardwareMap.get(DigitalChannel.class, "sensor_digital");
