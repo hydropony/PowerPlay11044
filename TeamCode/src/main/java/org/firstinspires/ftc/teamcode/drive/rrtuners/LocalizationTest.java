@@ -26,6 +26,7 @@ public class LocalizationTest extends LinearOpMode {
 
         waitForStart();
 
+
         while (!isStopRequested()) {
             drive.setWeightedDrivePower(
                     new Pose2d(
