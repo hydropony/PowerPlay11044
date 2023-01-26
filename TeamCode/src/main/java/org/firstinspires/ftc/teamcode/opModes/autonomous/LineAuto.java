@@ -192,6 +192,7 @@ public class LineAuto extends LinearOpMode {
         }
 
 
+
         //R.drive.followTrajectory(forward);
         // R.lift.state = Lift.State.MIDDLE;
         R.lift.AutoMotorSetP(0.9);
