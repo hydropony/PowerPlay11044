@@ -29,6 +29,7 @@ public class Intake {
         telemetry = linearOpMode.telemetry;
         gamepad1 = linearOpMode.gamepad2;
 
+
         servo1 = hardwareMap.get(CRServo.class, "intakeservo1"/*HardwareConfig.INTAKE_SERVO_1*/);
         servo2 = hardwareMap.get(CRServo.class, "intakeservo2"/*HardwareConfig.INTAKE_SERVO_2*/);
 
@@ -63,6 +64,7 @@ public class Intake {
             servo2.setPower(-bb);
         }
     }
+
 
     public void teleop() {
         if (digitalTouch.getVoltage() > 1){
