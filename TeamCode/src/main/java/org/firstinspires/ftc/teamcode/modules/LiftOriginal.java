@@ -314,6 +314,8 @@ public class LiftOriginal {
         motor2.setPower(d);
     }
 
+
+
     public int PositionTeleop1(double posit, int i)
     {
         if (i == 1){
