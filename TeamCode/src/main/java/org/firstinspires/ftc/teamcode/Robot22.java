@@ -151,31 +151,7 @@ public class Robot22 extends Robot {
                     )
             );
         }
-        /*if (nnr != nwL){
-            if (T.milliseconds() > 300 && nwL != 0){
-                drive.setWeightedDrivePower(
-                        new Pose2d(
-                                nwL,
-                                -0,
-                                -0
-                        )
-                );
-                int y = (int) T.milliseconds() / 5;
-                T = new ElapsedTime();
-                while (T.milliseconds() < y);
-            }
-            nwL = nnr;
-            T = new ElapsedTime();
-        }
-        else {
-            drive.setWeightedDrivePower(
-                    new Pose2d(
-                            -gamepad1.left_stick_y,
-                            -gamepad1.left_stick_x,
-                            (gamepad1.left_trigger - gamepad1.right_trigger)
-                    )
-            );
-        }*/
+
 
 
             telemetry.addData("heading", heading);
