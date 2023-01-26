@@ -32,6 +32,7 @@ public class EncoderMecanumDrive {
         leftRear.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
+
         pos = 0;
     }
     /*public void EncoderTurnLeft(double MecanumPosition, double speed){
