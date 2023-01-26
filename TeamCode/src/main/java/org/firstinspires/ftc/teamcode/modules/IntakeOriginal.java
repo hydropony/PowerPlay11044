@@ -35,6 +35,8 @@ public class IntakeOriginal {
         telemetry.addData("", "Intake initialized!");
     }
 
+
+
     public void teleop() {
         if (gamepad2.right_stick_y > 0) {
             servo1.setPower(1);
