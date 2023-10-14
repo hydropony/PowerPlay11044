@@ -10,5 +10,7 @@ public class HardwareConfig {
     public static String LIFT_MOTOR_1 = "liftmotor1";
     public static String LIFT_MOTOR_2 = "liftmotor2";
     public static String V4B_MOTOR = "v4bmotor";
+    public static String SERVO_LEFT = "servoleft";
+    public static String SERVO_RIGHT = "servoright";
 
 }

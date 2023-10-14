@@ -44,7 +44,7 @@ import java.util.List;
 @Config
 @TeleOp(group = "drive")
 public class MotorDirectionDebugger extends LinearOpMode {
-    public static double MOTOR_POWER = 0.7;
+    public static double MOTOR_POWER = 0.5/*0.7*/;
 
     @Override
     public void runOpMode() throws InterruptedException {

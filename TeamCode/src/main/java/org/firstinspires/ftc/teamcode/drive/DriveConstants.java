@@ -22,8 +22,8 @@ public class DriveConstants {
     /*
      * These are motor constants that should be listed online for your motors.
      */
-    public static final double TICKS_PER_REV = 537.6;
-    public static final double MAX_RPM = 340;
+    public static final double TICKS_PER_REV = 8192;
+    public static final double MAX_RPM = 7500;
 
     /*
      * Set RUN_USING_ENCODER to true to enable built-in hub velocity control using drive encoders.
@@ -47,7 +47,7 @@ public class DriveConstants {
      */
     public static double WHEEL_RADIUS = 1.9685; // in
     public static double GEAR_RATIO = 1.25; // output (wheel) speed / input (motor) speed
-    public static double TRACK_WIDTH = 14.28; // in
+    public static double TRACK_WIDTH = 6.93; // in
 
     /*
      * These are the feedforward parameters used to model the drive motor behavior. If you are using
@@ -55,9 +55,9 @@ public class DriveConstants {
      * motor encoders or have elected not to use them for velocity control, these values should be
      * empirically tuned.
      */
-    public static double kV = 0.016;
-    public static double kA = 0.004;
-    public static double kStatic = 0.0123;
+    public static double kV = 0.012402541923481;
+    public static double kA = 0.003;
+    public static double kStatic = 0.057;
 
 
     /*
@@ -81,17 +81,17 @@ public class DriveConstants {
      * affected if it is aiming for a velocity not actually possible.
      *
      * The maximum acceleration is somewhat arbitrary and it is recommended that you tweak this yourself based on
-     * actual testing. Just set it at a reasonable value and keep increasing until your path following starts
+     * actual testing. Just set it at a reasonable value and keep increasing until your path following starts*-
      * to degrade. As of now, it simply mirrors the velocity, resulting in 59.57470216843153 in/s/s
      *
      * Maximum Angular Velocity is calculated as: maximum velocity / trackWidth * (180 / Math.PI) but capped at 360°/s.
      * You are free to raise this on your own if you would like. It is best determined through experimentation.
 
      */
-    public static double MAX_VEL = 61.9463268;
-    public static double MAX_ACCEL = 61.9463268;
-    public static double MAX_ANG_VEL = 1.94 * 0.8;
-    public static double MAX_ANG_ACCEL = 1.94 * 0.8;
+    public static double MAX_VEL = 78.24471102784588;
+    public static double MAX_ACCEL = 50.9957688222767;
+    public static double MAX_ANG_VEL = 8.128889083862305;
+    public static double MAX_ANG_ACCEL = 6.50311127;
 
 
     public static double encoderTicksToInches(double ticks) {
